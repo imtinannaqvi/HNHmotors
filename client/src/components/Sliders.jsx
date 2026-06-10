@@ -1,68 +1,98 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+
+const cars = [
+  { tag: '2026 Model', name: 'BMW',  image: '/bmw.jpg',  desc: 'The ultimate driving machine.',     price: '$85,000', id: null, color: '#e85d04', justify: 'left'  },
+  { tag: '2026 Model', name: 'Audi', image: '/audi.jpg', desc: 'Electric innovation redefined.',     price: '$60,000', id: null, color: '#e85d04', justify: 'right' },
+];
 
 const Sliders = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [current, setCurrent]   = useState(0);
+  const [animating, setAnimating] = useState(false);
+  const navigate  = useNavigate();
+  const timerRef  = useRef(null);
 
-  const cars = [
-    {
-      name: "BMW",
-      image: "/bmw.jpg",
-      details: "The Ultimate Driving Machine.",
-      price: "$85,000",
-      justify: "justify-start" 
-    },
-    {
-      name: "Tesla",
-      image: "/testa.jpg",
-      details: "Electric innovation redefined.",
-      price: "$60,000",
-      justify: "justify-end" 
-    }
-  ];
+  const go = (idx) => {
+    const next = (idx + cars.length) % cars.length;
+    setAnimating(false);
+    setTimeout(() => { setCurrent(next); setAnimating(true); }, 10);
+  };
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev === cars.length - 1 ? 0 : prev + 1));
-    }, 4000);
-    return () => clearInterval(interval);
-  }, []);
+    setAnimating(true);
+    timerRef.current = setInterval(() => go(current + 1), 5000);
+    return () => clearInterval(timerRef.current);
+  }, [current]);
+
+  const car = cars[current];
 
   return (
-    <div className="relative w-full h-[500px] overflow-hidden bg-gray-900 flex items-center px-16">
-      {/* Background Image */}
-      <img 
-        key={cars[currentIndex].image}
-        src={cars[currentIndex].image} 
-        alt={cars[currentIndex].name} 
-        className="absolute inset-0 w-full h-full object-cover animate-fade-in" 
-      />
-      <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-black/60" />
+    <div className="relative w-full h-[520px] overflow-hidden bg-gray-900">
 
-      {/* Content Container */}
-      <div className={`relative w-full flex ${cars[currentIndex].justify} items-center transition-all duration-1000`}>
-        
-        {/* Modern Card Design */}
-        <div className="w-[400px] bg-white/10 backdrop-blur-md p-8 border-l-4 border-blue-500 animate-slide-in">
-          <span className="text-xs font-bold uppercase tracking-[0.3em] text-blue-400 mb-2 block">2026 Model</span>
-          <h2 className="text-6xl font-black text-white mb-4 uppercase italic">{cars[currentIndex].name}</h2>
-          <p className="text-gray-200 mb-6 text-lg font-light leading-relaxed">{cars[currentIndex].details}</p>
-          
+      {/* Background image with slow zoom */}
+      <img
+        key={car.image}
+        src={car.image}
+        alt={car.name}
+        className="absolute inset-0 w-full h-full object-cover"
+        style={{ animation: 'fadeIn 1s ease forwards, kenburns 6s ease-out forwards' }}
+      />
+
+      {/* Overlay */}
+      <div className={`absolute inset-0 ${car.justify === 'right' ? 'bg-gradient-to-l' : 'bg-gradient-to-r'} from-black/85 via-black/45 to-transparent`} />
+
+      {/* Slide number */}
+      <div className="absolute top-6 right-6 text-xs tracking-widest text-white/40 font-medium">
+        {String(current + 1).padStart(2, '0')} / {String(cars.length).padStart(2, '0')}
+      </div>
+
+      {/* Content */}
+      <div className={`absolute inset-0 flex items-center px-[5%] ${car.justify === 'right' ? 'justify-end' : 'justify-start'}`}>
+        <div key={current} style={{ animation: animating ? 'slideIn 0.7s ease forwards' : 'none', maxWidth: '440px' }}>
+          <span className="inline-block text-[13px] font-bold tracking-[0.15em] mb-4 px-3 py-1 border border-orange-500 rounded-full text-white">
+            {car.tag}
+          </span>
+          <h2 className="text-[64px] font-black text-white italic leading-none mb-3">{car.name}</h2>
+          <p className="text-white/70 text-base font-light leading-relaxed mb-6">{car.desc}</p>
           <div className="flex items-baseline gap-2">
-            <span className="text-4xl font-extrabold text-white">{cars[currentIndex].price}</span>
-            <span className="text-sm text-gray-300 font-medium uppercase">/ mo</span>
+            <span className="text-4xl font-extrabold text-white">{car.price}</span>
+            <span className="text-xs uppercase tracking-widest text-white/50 font-medium">/ mo</span>
           </div>
-          
-          <button className="mt-8 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold uppercase tracking-widest text-sm transition-colors">
-            View Details
+          <button
+            onClick={() => car.id && navigate(`/car/${car.id}`)}
+            style={{ background: car.color }}
+            className="mt-7 px-7 py-3 text-white text-xs font-bold rounded-full tracking-widest transition-all duration-300 hover:brightness-110 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-orange-500/30">
+            View details
           </button>
         </div>
       </div>
 
+      {/* Dots */}
+      <div className="absolute bottom-6 left-[5%] flex gap-2">
+        {cars.map((_, i) => (
+          <button key={i} onClick={() => go(i)}
+            style={{ width: i === current ? '40px' : '28px', height: '3px', background: i === current ? car.color : 'rgba(255,255,255,0.3)', transition: 'all 0.4s', border: 'none', cursor: 'pointer', padding: 0 }}
+            aria-label={`Go to slide ${i + 1}`} />
+        ))}
+      </div>
+
+      {/* Arrows */}
+      <div className="absolute bottom-4 right-[5%] flex gap-2">
+        <button onClick={() => go(current - 1)}
+          className="w-10 h-10 flex items-center justify-center text-white border border-white/30 bg-white/5 hover:bg-orange-500 hover:border-orange-500 transition-all duration-300 rounded">
+          <ChevronLeft size={20} />
+        </button>
+        <button onClick={() => go(current + 1)}
+          className="w-10 h-10 flex items-center justify-center text-white border border-white/30 bg-white/5 hover:bg-orange-500 hover:border-orange-500 transition-all duration-300 rounded">
+          <ChevronRight size={20} />
+        </button>
+      </div>
+
       <style>{`
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideIn { from { opacity: 0; transform: translateX(-50px); } to { opacity: 1; transform: translateX(0); } }
-        .animate-fade-in { animation: fadeIn 1s ease-out; }
-        .animate-slide-in { animation: slideIn 0.8s ease-out; }
+        @keyframes fadeIn   { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn  { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes kenburns { from { transform: scale(1); } to { transform: scale(1.08); } }
       `}</style>
     </div>
   );

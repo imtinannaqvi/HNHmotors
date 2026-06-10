@@ -1,12 +1,12 @@
 import Car from '../models/Car.js';
+import mongoose from 'mongoose';
 
 // ── GET all cars with filters + pagination ────────────────
 export const getCars = async (req, res) => {
   try {
     const {
-      make, model, year, minPrice, maxPrice,
-      fuelType, transmission, bodyType,
-      condition, search, status,
+      minPrice, maxPrice,
+      search, status,
       page  = 1,
       limit = 12,
       sortBy = 'createdAt',
@@ -14,14 +14,7 @@ export const getCars = async (req, res) => {
 
     const query = {};
 
-    if (make)         query.make         = { $regex: make,  $options: 'i' };
-    if (model)        query.model        = { $regex: model, $options: 'i' };
-    if (year)         query.year         = Number(year);
-    if (fuelType)     query.fuelType     = fuelType;
-    if (transmission) query.transmission = transmission;
-    if (bodyType)     query.bodyType     = bodyType;
-    if (condition)    query.condition    = condition;
-    if (status)       query.status       = status;
+    if (status) query.status = status;
 
     if (minPrice || maxPrice) {
       query.price = {};
@@ -30,20 +23,14 @@ export const getCars = async (req, res) => {
     }
 
     if (search) {
-      query.$or = [
-        { title: { $regex: search, $options: 'i' } },
-        { make:  { $regex: search, $options: 'i' } },
-        { model: { $regex: search, $options: 'i' } },
-        { description: { $regex: search, $options: 'i' } },
-      ];
+      query.title = { $regex: search, $options: 'i' };
     }
 
     const total = await Car.countDocuments(query);
     const cars  = await Car.find(query)
       .sort({ [sortBy]: -1 })
       .skip((page - 1) * limit)
-      .limit(Number(limit))
-      // .populate('dealer', 'name email phone');
+      .limit(Number(limit));
 
     res.json({
       cars,
@@ -56,12 +43,20 @@ export const getCars = async (req, res) => {
   }
 };
 
+// ── GET special offer cars ────────────────────────────────
+export const getSpecialOffers = async (req, res) => {
+  try {
+    const cars = await Car.find({ isSpecialOffer: true }).limit(8).sort({ createdAt: -1 });
+    res.json({ cars });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 // ── GET featured cars ─────────────────────────────────────
 export const getFeaturedCars = async (req, res) => {
   try {
-    const cars = await Car.find({ isFeatured: true, status: 'available' })
-      .limit(8)
-      // .populate('dealer', 'name email');
+    const cars = await Car.find({ isFeatured: true, status: 'available' }).limit(8);
     res.json(cars);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -73,21 +68,16 @@ export const getCarById = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // ✅ ADD THIS (VERY IMPORTANT)
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ message: 'Invalid car ID' });
     }
 
     const car = await Car.findById(id);
-
-    if (!car) {
-      return res.status(404).json({ message: 'Car not found' });
-    }
+    if (!car) return res.status(404).json({ message: 'Car not found' });
 
     res.json(car);
-
   } catch (err) {
-    console.error("ERROR:", err); // 👈 add this
+    console.error('GET BY ID ERROR:', err);
     res.status(500).json({ message: err.message });
   }
 };
@@ -96,41 +86,32 @@ export const getCarById = async (req, res) => {
 export const createCar = async (req, res) => {
   try {
     const {
-      title, description, price,
-      category, brand, make, model,
-      year, mileage, color,
-      fuelType, transmission, condition,
-      engineSize, doors, seats,
-      features, location, isFeatured,
+      title, price,
+      details, features,
+      isFeatured, isSpecialOffer, discountedPrice, offerLabel,
     } = req.body;
 
-    // ── Handle uploaded images ─────────────────────────────
     const images = req.files
       ? req.files.map(f => `uploads/cars/${f.filename}`)
       : [];
-
     const thumbnail = images[0] || '';
 
     const car = await Car.create({
-      title, description,
-      price:        Number(price),
-      category, brand, make, model,
-      year:         Number(year),
-      mileage:      Number(mileage) || 0,
-      color, fuelType, transmission, condition,
-      engineSize,
-      doors:        Number(doors)  || 0,
-      seats:        Number(seats)  || 0,
-      features:     features ? JSON.parse(features) : [],
-      location,
-      isFeatured:   isFeatured === 'true',
+      title,
+      price:           Number(price),
+      details:         details  ? JSON.parse(details)  : {},
+      features:        features ? JSON.parse(features) : [],
       images,
       thumbnail,
-      dealer: req.user._id,
+      isFeatured:      isFeatured === 'true',
+      isSpecialOffer:  isSpecialOffer === 'true',
+      discountedPrice: discountedPrice ? Number(discountedPrice) : null,
+      offerLabel:      offerLabel || '',
     });
 
     res.status(201).json({ message: 'Car added successfully', car });
   } catch (err) {
+    console.error('CREATE CAR ERROR:', err);
     res.status(500).json({ message: err.message });
   }
 };
@@ -139,31 +120,31 @@ export const createCar = async (req, res) => {
 export const updateCar = async (req, res) => {
   try {
     const car = await Car.findById(req.params.id);
-    if (!car)
-      return res.status(404).json({ message: 'Car not found' });
+    if (!car) return res.status(404).json({ message: 'Car not found' });
 
-    // ── Only dealer who owns it or admin can update ────────
-if (
-  !car.dealer ||
-  (car.dealer.toString() !== req.user._id.toString() && req.user.role !== 'admin')
-) {
-  return res.status(403).json({ message: 'Not authorized' });
-}      return res.status(403).json({ message: 'Not authorized' });
+    const updatedData = { ...req.body };
 
-    // ── Handle new images if uploaded ──────────────────────
-    const newImages = req.files
-      ? req.files.map(f => `uploads/cars/${f.filename}`)
-      : [];
+    if (req.body.details)  updatedData.details  = JSON.parse(req.body.details);
+    if (req.body.features) updatedData.features = JSON.parse(req.body.features);
+    if (req.body.price)    updatedData.price    = Number(req.body.price);
 
-    const updatedData = {
-      ...req.body,
-      images:    newImages.length > 0 ? newImages : car.images,
-      thumbnail: newImages.length > 0 ? newImages[0] : car.thumbnail,
-    };
+    updatedData.isSpecialOffer  = req.body.isSpecialOffer === 'true';
+    updatedData.discountedPrice = req.body.discountedPrice ? Number(req.body.discountedPrice) : null;
 
-    if (req.body.features) {
-      updatedData.features = JSON.parse(req.body.features);
+    // ── Images ──
+    if (req.body.existingImages !== undefined) {
+      const kept  = JSON.parse(req.body.existingImages);
+      const added = req.files ? req.files.map(f => `uploads/cars/${f.filename}`) : [];
+      const finalImages = [...kept, ...added];
+      updatedData.images    = finalImages;
+      updatedData.thumbnail = finalImages[0] || '';
+    } else if (req.files && req.files.length > 0) {
+      const added = req.files.map(f => `uploads/cars/${f.filename}`);
+      updatedData.images    = added;
+      updatedData.thumbnail = added[0];
     }
+
+    delete updatedData.existingImages;
 
     const updated = await Car.findByIdAndUpdate(
       req.params.id,
@@ -173,6 +154,7 @@ if (
 
     res.json({ message: 'Car updated successfully', car: updated });
   } catch (err) {
+    console.error('UPDATE CAR ERROR:', err);
     res.status(500).json({ message: err.message });
   }
 };
@@ -182,42 +164,18 @@ export const deleteCar = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // ✅ prevent crash
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ message: 'Invalid car ID' });
     }
 
     const car = await Car.findById(id);
-
-    if (!car) {
-      return res.status(404).json({ message: 'Car not found' });
-    }
-
-    // ✅ safe check
-    if (
-      !car.dealer ||
-      (car.dealer.toString() !== req.user._id.toString() && req.user.role !== 'admin')
-    ) {
-      return res.status(403).json({ message: 'Not authorized' });
-    }
+    if (!car) return res.status(404).json({ message: 'Car not found' });
 
     await Car.findByIdAndDelete(id);
-
     res.json({ message: 'Car deleted successfully' });
 
   } catch (err) {
-    console.error("DELETE ERROR:", err); // 👈 check terminal
-    res.status(500).json({ message: err.message });
-  }
-};
-
-// ── GET dealer's own cars ─────────────────────────────────
-export const getMyCars = async (req, res) => {
-  try {
-    const cars = await Car.find({ dealer: req.user._id })
-      .sort({ createdAt: -1 });
-    res.json({ cars, total: cars.length });
-  } catch (err) {
+    console.error('DELETE ERROR:', err);
     res.status(500).json({ message: err.message });
   }
 };

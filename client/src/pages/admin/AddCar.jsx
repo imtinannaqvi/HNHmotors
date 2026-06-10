@@ -1,83 +1,107 @@
 import { useState } from 'react';
 import api from "../../api/axios.js";
-import { Upload, CheckCircle, Plus, X } from 'lucide-react';
+import { Upload, CheckCircle, Plus, X, Tag, ImageIcon, ListPlus, Sparkles } from 'lucide-react';
 
-const OPTIONS = {
-  category:     ['Sedan', 'SUV', 'Hatchback', 'Coupe', 'Truck', 'Van', 'Convertible', 'Wagon'],
-  brand:        ['Toyota', 'Honda', 'BMW', 'Mercedes', 'Audi', 'Ford', 'Hyundai', 'Kia', 'Nissan', 'Volkswagen', 'Chevrolet', 'Other'],
-  fuelType:     ['Petrol', 'Diesel', 'Electric', 'Hybrid', 'Other'],
-  transmission: ['Manual', 'Automatic'],
-  condition:    ['New', 'Used', 'Certified Pre-Owned'],
-};
+const inputCls = 'w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-sm text-slate-700 outline-none focus:border-slate-400 focus:ring-2 focus:ring-slate-100 transition font-medium bg-white';
+const labelCls = 'block text-[11px] font-medium uppercase tracking-wider text-slate-400 mb-2';
 
-const inputCls = 'w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-800 outline-none focus:border-gray-800 transition font-medium bg-white';
-const labelCls = 'block text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1.5';
-
-// ── OUTSIDE component — prevents focus loss ───────────────
-const Field = ({ label, children }) => (
-  <div className="flex flex-col">
-    <label className={labelCls}>{label}</label>
+const Section = ({ icon: Icon, title, hint, children }) => (
+  <section className="bg-white border border-slate-200/70 rounded-2xl shadow-sm shadow-slate-100 p-6">
+    <div className="flex items-center gap-3 mb-5">
+      <div className="w-9 h-9 rounded-xl bg-slate-700 flex items-center justify-center flex-shrink-0">
+        <Icon size={16} className="text-white" />
+      </div>
+      <div>
+        <h2 className="text-sm font-medium text-slate-800 leading-tight">{title}</h2>
+        {hint && <p className="text-xs text-slate-400 mt-0.5">{hint}</p>}
+      </div>
+    </div>
     {children}
-  </div>
+  </section>
 );
 
-// All optional fields in reveal order
-const EXTRA_FIELDS = [
-  { key: 'category',     label: 'Category',        type: 'select' },
-  { key: 'brand',        label: 'Brand',            type: 'select' },
-  { key: 'make',         label: 'Make',             type: 'input',  placeholder: 'e.g. BMW'          },
-  { key: 'model',        label: 'Model',            type: 'input',  placeholder: 'e.g. X5'           },
-  { key: 'year',         label: 'Year',             type: 'number', placeholder: 'e.g. 2022'         },
-  { key: 'mileage',      label: 'Mileage (km)',     type: 'number', placeholder: 'e.g. 25000'        },
-  { key: 'color',        label: 'Color',            type: 'input',  placeholder: 'e.g. Midnight Blue' },
-  { key: 'fuelType',     label: 'Fuel Type',        type: 'select' },
-  { key: 'transmission', label: 'Transmission',     type: 'select' },
-  { key: 'condition',    label: 'Condition',        type: 'select' },
-  { key: 'location',     label: 'Location',         type: 'input',  placeholder: 'e.g. London'       },
-  { key: 'description',  label: 'Description',      type: 'textarea' },
-];
-
 const AddCar = () => {
-  const [formData, setFormData] = useState({
-    title: '', description: '', price: '',
-    category: '', brand: '', make: '', model: '',
-    year: '', mileage: '', color: '',
-    fuelType: '', transmission: '', condition: '', location: '',
-  });
+  const [formData, setFormData] = useState({ title: '', price: '' });
 
-  const [visibleCount, setVisibleCount] = useState(0); // how many extra fields shown
-  const [image,        setImage]        = useState(null);
-  const [preview,      setPreview]      = useState(null);
+  const [details,    setDetails]    = useState([]);
+  const [labelInput, setLabelInput] = useState('');
+  const [valueInput, setValueInput] = useState('');
+
+  const [images,   setImages]   = useState([]);   // File[]
+  const [previews, setPreviews] = useState([]);   // string[]
   const [loading,      setLoading]      = useState(false);
   const [success,      setSuccess]      = useState(false);
+  const [features,     setFeatures]     = useState([]);
+  const [featureInput, setFeatureInput] = useState('');
+
+  const [isSpecialOffer,  setIsSpecialOffer]  = useState(false);
+  const [discountedPrice, setDiscountedPrice] = useState('');
+  const [offerLabel,      setOfferLabel]      = useState('');
 
   const handleChange = (e) =>
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
 
-  const handleImage = (e) => {
-    const file = e.target.files[0];
-    if (file) { setImage(file); setPreview(URL.createObjectURL(file)); }
+  const handleImages = (e) => {
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
+    setImages(prev => [...prev, ...files]);
+    setPreviews(prev => [...prev, ...files.map(f => URL.createObjectURL(f))]);
+    e.target.value = '';
   };
+  const removeImage = (i) => {
+    setImages(prev => prev.filter((_, idx) => idx !== i));
+    setPreviews(prev => prev.filter((_, idx) => idx !== i));
+  };
+
+  const addFeature = () => {
+    const val = featureInput.trim();
+    if (val && !features.includes(val)) {
+      setFeatures(prev => [...prev, val]);
+      setFeatureInput('');
+    }
+  };
+  const removeFeature = (f) => setFeatures(prev => prev.filter(x => x !== f));
+
+  const addDetail = () => {
+    const label = labelInput.trim();
+    const value = valueInput.trim();
+    if (label && value) {
+      setDetails(prev => [...prev, { label, value }]);
+      setLabelInput('');
+      setValueInput('');
+    }
+  };
+  const removeDetail = (i) => setDetails(prev => prev.filter((_, idx) => idx !== i));
+
+  const discountPct = formData.price && discountedPrice
+    ? Math.round((1 - discountedPrice / formData.price) * 100)
+    : null;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     const data = new FormData();
-    Object.keys(formData).forEach(key => data.append(key, formData[key]));
-    if (image) data.append('images', image);
+    data.append('title', formData.title);
+    data.append('price', formData.price);
+    if (details.length) {
+      const detailsObj = details.reduce((acc, d) => ({ ...acc, [d.label]: d.value }), {});
+      data.append('details', JSON.stringify(detailsObj));
+    }
+    if (features.length) data.append('features', JSON.stringify(features));
+    images.forEach(img => data.append('images', img));
+    data.append('isSpecialOffer', isSpecialOffer);
+    if (isSpecialOffer && discountedPrice) data.append('discountedPrice', discountedPrice);
+    if (isSpecialOffer && offerLabel)      data.append('offerLabel',      offerLabel);
+
     try {
-      await api.post('/cars', data, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
+      await api.post('/cars', data, { headers: { 'Content-Type': 'multipart/form-data' } });
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
-      setFormData({
-        title: '', description: '', price: '',
-        category: '', brand: '', make: '', model: '',
-        year: '', mileage: '', color: '',
-        fuelType: '', transmission: '', condition: '', location: '',
-      });
-      setImage(null); setPreview(null); setVisibleCount(0);
+      setFormData({ title: '', price: '' });
+      setImages([]); setPreviews([]);
+      setDetails([]); setLabelInput(''); setValueInput('');
+      setFeatures([]); setFeatureInput('');
+      setIsSpecialOffer(false); setDiscountedPrice(''); setOfferLabel('');
     } catch (err) {
       alert('Error: ' + (err.response?.data?.message || err.message));
     } finally {
@@ -85,160 +109,212 @@ const AddCar = () => {
     }
   };
 
-  const visibleExtras  = EXTRA_FIELDS.slice(0, visibleCount);
-  const hasMoreFields  = visibleCount < EXTRA_FIELDS.length;
-
-  const renderField = (field) => {
-    if (field.type === 'select') {
-      return (
-        <select name={field.key} value={formData[field.key]}
-          onChange={handleChange} className={inputCls}>
-          <option value="">Select {field.label}</option>
-          {OPTIONS[field.key]?.map(o => <option key={o} value={o}>{o}</option>)}
-        </select>
-      );
-    }
-    if (field.type === 'textarea') {
-      return (
-        <textarea name={field.key} value={formData[field.key]}
-          onChange={handleChange} rows={3}
-          placeholder="Describe the vehicle..."
-          className={`${inputCls} resize-none`} />
-      );
-    }
-    return (
-      <input name={field.key} type={field.type === 'number' ? 'number' : 'text'}
-        value={formData[field.key]} onChange={handleChange}
-        placeholder={field.placeholder}
-        className={inputCls} />
-    );
-  };
-
   return (
-    <div className="max-w-2xl mx-auto py-6">
+    <div className="min-h-screen bg-slate-100">
+      <div className="max-w-5xl mx-auto px-4 py-8">
 
-      {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-xl font-bold text-gray-900">Add New Vehicle</h1>
-        <p className="text-sm text-gray-400 mt-0.5">
-          Fill in basic info then add more details with the + button
-        </p>
-      </div>
-
-      {/* Success */}
-      {success && (
-        <div className="flex items-center gap-2 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl mb-5 text-sm font-medium">
-          <CheckCircle size={15} /> Car published successfully!
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-2xl font-medium text-slate-800 tracking-tight">Add New Vehicle</h1>
+            <p className="text-sm text-slate-400 mt-1">Add a listing with your own custom details</p>
+          </div>
+          <span className="hidden sm:inline-flex items-center gap-1.5 text-xs font-medium text-slate-500 bg-white border border-slate-200 px-3 py-1.5 rounded-full">
+            <Sparkles size={13} /> Draft
+          </span>
         </div>
-      )}
 
-      <form onSubmit={handleSubmit}>
-        <div className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
+        {success && (
+          <div className="flex items-center gap-2 bg-green-50 border border-green-200 text-green-600 px-4 py-3 rounded-xl mb-6 text-sm font-medium">
+            <CheckCircle size={15} /> Car published successfully!
+          </div>
+        )}
 
-          {/* ── Image Upload ── */}
-          <div className="p-5 border-b border-gray-50">
-            <label htmlFor="imgUpload"
-              className="flex flex-col items-center justify-center border-2 border-dashed border-gray-200 rounded-xl cursor-pointer hover:border-gray-400 transition overflow-hidden"
-              style={{ minHeight: '140px' }}>
-              {preview ? (
-                <div className="relative w-full">
-                  <img src={preview} alt="preview"
-                    className="w-full h-44 object-cover" />
-                  <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 hover:opacity-100 transition">
-                    <p className="text-white text-xs font-semibold">Change Image</p>
+        <form onSubmit={handleSubmit}>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            {/* ── LEFT column: images ── */}
+            <div className="space-y-6">
+              <Section icon={ImageIcon} title="Photos" hint="First image is the main one">
+                {previews.length > 0 ? (
+                  <div className="space-y-3">
+                    {/* Main image */}
+                    <div className="relative rounded-xl overflow-hidden border border-slate-200">
+                      <img src={previews[0]} alt="main" className="w-full h-52 object-cover" />
+                      <span className="absolute top-2 left-2 bg-slate-800/90 text-white text-[10px] font-medium uppercase tracking-wide px-2 py-1 rounded">
+                        Main
+                      </span>
+                      <button type="button" onClick={() => removeImage(0)}
+                        className="absolute top-2 right-2 w-7 h-7 flex items-center justify-center bg-black/40 hover:bg-black/60 text-white rounded-lg transition">
+                        <X size={14} />
+                      </button>
+                    </div>
+
+                    {/* Thumbnail row */}
+                    <div className="grid grid-cols-4 gap-2">
+                      {previews.slice(1).map((src, i) => (
+                        <div key={i + 1} className="relative h-16 rounded-lg overflow-hidden border border-slate-200">
+                          <img src={src} alt={`thumb-${i + 1}`} className="w-full h-full object-cover" />
+                          <button type="button" onClick={() => removeImage(i + 1)}
+                            className="absolute top-0.5 right-0.5 w-5 h-5 flex items-center justify-center bg-black/40 hover:bg-black/60 text-white rounded transition">
+                            <X size={11} />
+                          </button>
+                        </div>
+                      ))}
+                      {/* Add-more tile */}
+                      <label htmlFor="imgUpload"
+                        className="h-16 flex items-center justify-center border-2 border-dashed border-slate-200 rounded-lg cursor-pointer hover:border-slate-400 text-slate-300 transition">
+                        <Plus size={18} />
+                      </label>
+                    </div>
+                    <p className="text-xs text-slate-400">{previews.length} image{previews.length > 1 ? 's' : ''} selected</p>
+                  </div>
+                ) : (
+                  <label htmlFor="imgUpload"
+                    className="block border-2 border-dashed border-slate-200 rounded-xl cursor-pointer hover:border-slate-400 transition">
+                    <div className="flex flex-col items-center gap-2 py-12 text-slate-300">
+                      <Upload size={26} />
+                      <p className="text-sm font-medium text-slate-400">Click to upload images</p>
+                      <p className="text-xs text-slate-300">First image becomes the main photo</p>
+                    </div>
+                  </label>
+                )}
+                <input id="imgUpload" type="file" accept="image/*" multiple className="hidden" onChange={handleImages} />
+              </Section>
+            </div>
+
+            {/* ── RIGHT column: all the inputs ── */}
+            <div className="lg:col-span-2 space-y-6">
+
+              {/* Basics */}
+              <Section icon={ListPlus} title="Basics" hint="Required information">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="md:col-span-2">
+                    <label className={labelCls}>Listing Title *</label>
+                    <input name="title" value={formData.title} onChange={handleChange} required
+                      placeholder="e.g. 2022 BMW X5 xDrive40i" className={inputCls} />
+                  </div>
+                  <div>
+                    <label className={labelCls}>Price (£) *</label>
+                    <input name="price" type="number" value={formData.price} onChange={handleChange} required
+                      placeholder="e.g. 35000" className={inputCls} />
                   </div>
                 </div>
-              ) : (
-                <div className="flex flex-col items-center gap-2 py-8 text-gray-300">
-                  <Upload size={26} />
-                  <p className="text-sm font-medium text-gray-400">Click to upload vehicle image</p>
-                  <p className="text-xs">JPG, PNG, WEBP — max 5MB</p>
-                </div>
-              )}
-              <input id="imgUpload" type="file" accept="image/*"
-                className="hidden" onChange={handleImage} />
-            </label>
-          </div>
+              </Section>
 
-          {/* ── Always visible: Title + Price ── */}
-          <div className="p-5 grid grid-cols-1 md:grid-cols-2 gap-4 border-b border-gray-50">
-            <div className="md:col-span-2">
-              <Field label="Listing Title *">
-                <input name="title" value={formData.title}
-                  onChange={handleChange} required
-                  placeholder="e.g. 2022 BMW X5 xDrive40i"
-                  className={inputCls} />
-              </Field>
+              {/* Custom details */}
+              <Section icon={ListPlus} title="Vehicle details" hint="Add your own label / value pairs">
+                <div className="flex flex-col sm:flex-row gap-2 mb-4">
+                  <input value={labelInput} onChange={e => setLabelInput(e.target.value)}
+                    placeholder="Label (e.g. Year)"
+                    className={`${inputCls} sm:max-w-[200px]`} />
+                  <input value={valueInput} onChange={e => setValueInput(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), addDetail())}
+                    placeholder="Value (e.g. 2022)"
+                    className={inputCls} />
+                  <button type="button" onClick={addDetail} disabled={!labelInput.trim() || !valueInput.trim()}
+                    className="flex items-center justify-center gap-1 px-5 py-2.5 bg-slate-700 hover:bg-slate-800 text-white text-sm font-medium rounded-xl transition flex-shrink-0 disabled:opacity-40">
+                    <Plus size={14} /> Add
+                  </button>
+                </div>
+
+                {details.length > 0 ? (
+                  <div className="space-y-2">
+                    {details.map((d, i) => (
+                      <div key={i} className="flex items-center gap-3 bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5">
+                        <span className="w-32 flex-shrink-0 text-xs font-medium uppercase tracking-wide text-slate-400">{d.label}</span>
+                        <span className="flex-1 text-sm font-medium text-slate-700 truncate">{d.value}</span>
+                        <button type="button" onClick={() => removeDetail(i)}
+                          className="flex-shrink-0 w-7 h-7 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition">
+                          <X size={14} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-6 border border-dashed border-slate-200 rounded-xl">
+                    <p className="text-xs text-slate-400">Type a label and value, then click Add</p>
+                  </div>
+                )}
+              </Section>
+
+              {/* Features */}
+              <Section icon={CheckCircle} title="Features" hint="Short keywords">
+                <div className="flex gap-2 mb-3">
+                  <input value={featureInput} onChange={e => setFeatureInput(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), addFeature())}
+                    maxLength={30}
+                    placeholder="e.g. Sunroof"
+                    className={`${inputCls} max-w-[240px]`} />
+                  <button type="button" onClick={addFeature}
+                    className="flex items-center gap-1 px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 text-sm font-medium rounded-xl transition flex-shrink-0">
+                    <Plus size={14} /> Add
+                  </button>
+                </div>
+                {features.length > 0 ? (
+                  <div className="flex flex-wrap gap-2">
+                    {features.map(f => (
+                      <span key={f} className="flex items-center gap-1.5 bg-slate-700 text-white text-xs font-medium px-3 py-1.5 rounded-lg">
+                        {f}
+                        <button type="button" onClick={() => removeFeature(f)} className="hover:text-slate-300 transition">
+                          <X size={11} />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-xs text-slate-400">Type a keyword and press Enter or click Add</p>
+                )}
+              </Section>
+
+              {/* Special offer */}
+              <Section icon={Tag} title="Special offer" hint="Optional discount">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm text-slate-500">Enable a sale price for this listing</p>
+                  <button type="button" onClick={() => setIsSpecialOffer(p => !p)}
+                    className={`relative w-11 h-6 rounded-full transition-colors ${isSpecialOffer ? 'bg-slate-700' : 'bg-slate-200'}`}>
+                    <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${isSpecialOffer ? 'translate-x-5' : 'translate-x-0.5'}`} />
+                  </button>
+                </div>
+
+                {isSpecialOffer && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5 pt-5 border-t border-slate-100">
+                    <div>
+                      <label className={labelCls}>Sale price (£)</label>
+                      <input type="number" value={discountedPrice} onChange={e => setDiscountedPrice(e.target.value)}
+                        placeholder={`e.g. ${formData.price ? Math.round(formData.price * 0.9) : '28000'}`} className={inputCls} />
+                      {discountPct > 0 && (
+                        <p className="text-xs text-green-600 font-medium mt-1.5">{discountPct}% off the original price</p>
+                      )}
+                    </div>
+                    <div>
+                      <label className={labelCls}>Offer label</label>
+                      <input type="text" value={offerLabel} onChange={e => setOfferLabel(e.target.value)}
+                        placeholder="e.g. Summer Sale" className={inputCls} />
+                    </div>
+                  </div>
+                )}
+              </Section>
+
+              {/* Submit */}
+              <div className="flex items-center justify-end gap-3 pt-2">
+                {details.length > 0 && (
+                  <span className="text-xs text-slate-400 font-medium">
+                    {details.length} detail{details.length > 1 ? 's' : ''} added
+                  </span>
+                )}
+                <button type="submit" disabled={loading}
+                  className="flex items-center gap-2 px-7 py-3 bg-slate-800 hover:bg-slate-900 text-white text-sm font-medium rounded-xl transition disabled:opacity-50 shadow-sm">
+                  {loading ? (
+                    <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Publishing...</>
+                  ) : 'Publish Listing'}
+                </button>
+              </div>
+
             </div>
-            <Field label="Price (£) *">
-              <input name="price" type="number" value={formData.price}
-                onChange={handleChange} required
-                placeholder="e.g. 35000"
-                className={inputCls} />
-            </Field>
           </div>
-
-          {/* ── Progressive extra fields ── */}
-          {visibleExtras.length > 0 && (
-            <div className="p-5 grid grid-cols-1 md:grid-cols-2 gap-4 border-b border-gray-50">
-              {visibleExtras.map(field => (
-                <div key={field.key}
-                  className={field.type === 'textarea' ? 'md:col-span-2' : ''}>
-                  <Field label={field.label}>
-                    {renderField(field)}
-                  </Field>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* ── Add more / Submit row ── */}
-          <div className="p-5 flex items-center gap-3">
-            {/* + Add details button */}
-            {hasMoreFields && (
-              <button type="button"
-                onClick={() => setVisibleCount(prev => prev + 1)}
-                className="flex items-center gap-2 px-4 py-2.5 border border-dashed border-gray-300 rounded-xl text-sm font-semibold text-gray-500 hover:border-gray-500 hover:text-gray-700 hover:bg-gray-50 transition">
-                <div className="w-5 h-5 bg-gray-100 rounded-full flex items-center justify-center">
-                  <Plus size={13} className="text-gray-600" />
-                </div>
-                Add {EXTRA_FIELDS[visibleCount]?.label}
-              </button>
-            )}
-
-            {/* Show all remaining at once */}
-            {hasMoreFields && visibleCount > 0 && (
-              <button type="button"
-                onClick={() => setVisibleCount(EXTRA_FIELDS.length)}
-                className="text-xs text-gray-400 hover:text-gray-600 underline underline-offset-2 transition">
-                Add all fields
-              </button>
-            )}
-
-            {/* Spacer */}
-            <div className="flex-1" />
-
-            {/* Submit */}
-            <button type="submit" disabled={loading}
-              className="flex items-center gap-2 px-6 py-2.5 bg-gray-900 hover:bg-black text-white text-sm font-semibold rounded-xl transition disabled:opacity-50">
-              {loading ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  Publishing...
-                </>
-              ) : 'Publish Listing'}
-            </button>
-          </div>
-
-        </div>
-
-        {/* Field progress indicator */}
-        {visibleCount > 0 && (
-          <p className="text-center text-xs text-gray-400 mt-3 font-medium">
-            {visibleCount} of {EXTRA_FIELDS.length} optional fields added
-          </p>
-        )}
-      </form>
+        </form>
+      </div>
     </div>
   );
 };

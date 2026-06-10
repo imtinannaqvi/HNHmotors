@@ -1,10 +1,10 @@
 import './App.css';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 
-// Existing Components & Pages
 import Footer from './components/Footer';
 import Navbar from './components/Navbar';
 import Sliders from './components/Sliders';
+import Special from './components/Speical';
 import AboutUs from './pages/AboutUs';
 import CarDetails from './pages/CarDetails';
 import ContactUs from './pages/ContactUs';
@@ -12,44 +12,63 @@ import Listings from './pages/Listings';
 import Login from './pages/Login';
 import Register from './pages/Register';
 
-// Admin Components & Pages
 import AdminLayout from './layouts/AdminLayout';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AddCar from './pages/admin/AddCar';
 import ManageCars from './pages/admin/ManageCars';
 import AdminSettings from './pages/admin/AdminSettings';
-import EditCar from './pages/admin/EditCar'; // 1. Added EditCar import
+import EditCar from './pages/admin/EditCar';
+import ManageUsers from './pages/admin/ManageUsers';
+import ManageSpecialOffers from './pages/admin/ManageSpecialOffers';
+import Enquire from './pages/admin/Enquire';
+import WhyChos from './components/WhyChos';
+import FaqPreview from './components/FaqPreview';
+import Faqs from './pages/Faqs';
+const PublicLayout = ({ children }) => {
+  const { pathname } = useLocation();
+  const isAdmin = pathname.startsWith('/admin');
+  return (
+    <>
+      {!isAdmin && <Navbar />}
+      {children}
+      {!isAdmin && <Footer />}
+    </>
+  );
+};
 
 function App() {
   return (
     <Router>
-      <Navbar />
-      
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={
-          <>
-            <Sliders />
-            <Listings />
-          </>
-        } />
-        <Route path="/about" element={<AboutUs />} />
-        <Route path="/contact" element={<ContactUs />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/car/:id" element={<CarDetails />} />
+      <PublicLayout>
+        <Routes>
+          <Route path="/" element={
+            <>
+              <Sliders />
+              <Listings />
+              <Special/>
+              <WhyChos/>
+              <FaqPreview/>
+            </>
+          } />
+          <Route path="/about"    element={<AboutUs />} />
+          <Route path="/contact"  element={<ContactUs />} />
+          <Route path="/login"    element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/car/:id"  element={<CarDetails />} />
+          <Route path="/faqs" element={<Faqs />} />
 
-        {/* Admin Routes (Nested in AdminLayout) */}
-        <Route path="/admin" element={<AdminLayout />}>
-          <Route index element={<AdminDashboard />} />
-          <Route path="add-car" element={<AddCar />} />
-          <Route path="manage-cars" element={<ManageCars />} />
-          <Route path="edit-car/:id" element={<EditCar />} /> {/* 2. Added EditCar route */}
-          <Route path="settings" element={<AdminSettings />} />
-        </Route>
-      </Routes>
-
-      <Footer />
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index                    element={<AdminDashboard />} />
+            <Route path="add-car"           element={<AddCar />} />
+            <Route path="manage-cars"       element={<ManageCars />} />
+            <Route path="edit-car/:id"      element={<EditCar />} />
+            <Route path="settings"          element={<AdminSettings />} />
+            <Route path="users"             element={<ManageUsers />} />
+            <Route path="enquiries"         element={<Enquire />} />
+            <Route path="special-offers"    element={<ManageSpecialOffers />} />
+          </Route>
+        </Routes>
+      </PublicLayout>
     </Router>
   );
 }
