@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-route
 
 import Footer from './components/Footer';
 import Navbar from './components/Navbar';
+import ScrollToTop from './components/ScrollToTop';
 import Sliders from './components/Sliders';
 import Special from './components/Speical';
 import AboutUs from './pages/AboutUs';
@@ -24,6 +25,8 @@ import Enquire from './pages/admin/Enquire';
 import WhyChos from './components/WhyChos';
 import FaqPreview from './components/FaqPreview';
 import Faqs from './pages/Faqs';
+import CarTabs from './components/CarTabs';
+
 const PublicLayout = ({ children }) => {
   const { pathname } = useLocation();
   const isAdmin = pathname.startsWith('/admin');
@@ -39,14 +42,16 @@ const PublicLayout = ({ children }) => {
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <PublicLayout>
         <Routes>
           <Route path="/" element={
             <>
               <Sliders />
               <Listings />
-              <Special/>
+              <CarTabs/>
               <WhyChos/>
+              <Special/>
               <FaqPreview/>
             </>
           } />

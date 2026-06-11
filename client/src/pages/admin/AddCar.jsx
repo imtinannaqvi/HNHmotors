@@ -27,8 +27,13 @@ const AddCar = () => {
   const [labelInput, setLabelInput] = useState('');
   const [valueInput, setValueInput] = useState('');
 
-  const [images,   setImages]   = useState([]);   // File[]
-  const [previews, setPreviews] = useState([]);   // string[]
+  const [images,   setImages]   = useState([]);
+  const [previews, setPreviews] = useState([]);
+
+  // Brand logo
+  const [brandLogo,        setBrandLogo]        = useState(null);  // File
+  const [brandLogoPreview, setBrandLogoPreview] = useState('');
+
   const [loading,      setLoading]      = useState(false);
   const [success,      setSuccess]      = useState(false);
   const [features,     setFeatures]     = useState([]);
@@ -37,6 +42,9 @@ const AddCar = () => {
   const [isSpecialOffer,  setIsSpecialOffer]  = useState(false);
   const [discountedPrice, setDiscountedPrice] = useState('');
   const [offerLabel,      setOfferLabel]      = useState('');
+
+  // Does the details list contain a Brand row?
+  const brandDetail = details.find(d => d.label.toLowerCase() === 'brand');
 
   const handleChange = (e) =>
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -51,6 +59,18 @@ const AddCar = () => {
   const removeImage = (i) => {
     setImages(prev => prev.filter((_, idx) => idx !== i));
     setPreviews(prev => prev.filter((_, idx) => idx !== i));
+  };
+
+  const handleBrandLogo = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setBrandLogo(file);
+    setBrandLogoPreview(URL.createObjectURL(file));
+    e.target.value = '';
+  };
+  const removeBrandLogo = () => {
+    setBrandLogo(null);
+    setBrandLogoPreview('');
   };
 
   const addFeature = () => {
@@ -71,7 +91,11 @@ const AddCar = () => {
       setValueInput('');
     }
   };
-  const removeDetail = (i) => setDetails(prev => prev.filter((_, idx) => idx !== i));
+  const removeDetail = (i) => {
+    // If removing the Brand row, also clear the logo
+    if (details[i]?.label.toLowerCase() === 'brand') removeBrandLogo();
+    setDetails(prev => prev.filter((_, idx) => idx !== i));
+  };
 
   const discountPct = formData.price && discountedPrice
     ? Math.round((1 - discountedPrice / formData.price) * 100)
@@ -89,6 +113,7 @@ const AddCar = () => {
     }
     if (features.length) data.append('features', JSON.stringify(features));
     images.forEach(img => data.append('images', img));
+    if (brandLogo) data.append('brandLogo', brandLogo);
     data.append('isSpecialOffer', isSpecialOffer);
     if (isSpecialOffer && discountedPrice) data.append('discountedPrice', discountedPrice);
     if (isSpecialOffer && offerLabel)      data.append('offerLabel',      offerLabel);
@@ -101,6 +126,7 @@ const AddCar = () => {
       setImages([]); setPreviews([]);
       setDetails([]); setLabelInput(''); setValueInput('');
       setFeatures([]); setFeatureInput('');
+      setBrandLogo(null); setBrandLogoPreview('');
       setIsSpecialOffer(false); setDiscountedPrice(''); setOfferLabel('');
     } catch (err) {
       alert('Error: ' + (err.response?.data?.message || err.message));
@@ -138,7 +164,6 @@ const AddCar = () => {
               <Section icon={ImageIcon} title="Photos" hint="First image is the main one">
                 {previews.length > 0 ? (
                   <div className="space-y-3">
-                    {/* Main image */}
                     <div className="relative rounded-xl overflow-hidden border border-slate-200">
                       <img src={previews[0]} alt="main" className="w-full h-52 object-cover" />
                       <span className="absolute top-2 left-2 bg-slate-800/90 text-white text-[10px] font-medium uppercase tracking-wide px-2 py-1 rounded">
@@ -150,7 +175,6 @@ const AddCar = () => {
                       </button>
                     </div>
 
-                    {/* Thumbnail row */}
                     <div className="grid grid-cols-4 gap-2">
                       {previews.slice(1).map((src, i) => (
                         <div key={i + 1} className="relative h-16 rounded-lg overflow-hidden border border-slate-200">
@@ -161,7 +185,6 @@ const AddCar = () => {
                           </button>
                         </div>
                       ))}
-                      {/* Add-more tile */}
                       <label htmlFor="imgUpload"
                         className="h-16 flex items-center justify-center border-2 border-dashed border-slate-200 rounded-lg cursor-pointer hover:border-slate-400 text-slate-300 transition">
                         <Plus size={18} />
@@ -234,6 +257,35 @@ const AddCar = () => {
                 ) : (
                   <div className="text-center py-6 border border-dashed border-slate-200 rounded-xl">
                     <p className="text-xs text-slate-400">Type a label and value, then click Add</p>
+                  </div>
+                )}
+
+                {/* Brand logo upload — appears once a Brand detail exists */}
+                {brandDetail && (
+                  <div className="mt-4 pt-4 border-t border-slate-100">
+                    <label className={labelCls}>Brand logo for "{brandDetail.value}"</label>
+                    <div className="flex items-center gap-3">
+                      {brandLogoPreview ? (
+                        <div className="relative">
+                          <img src={brandLogoPreview} alt="Brand logo"
+                            className="h-12 w-12 object-contain border border-slate-200 rounded-xl p-1 bg-white" />
+                          <button type="button" onClick={removeBrandLogo}
+                            className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition">
+                            <X size={11} />
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="h-12 w-12 border border-dashed border-slate-300 rounded-xl flex items-center justify-center bg-slate-50 text-slate-300 text-[9px]">
+                          Logo
+                        </div>
+                      )}
+                      <label htmlFor="brandLogoUpload"
+                        className="flex items-center gap-2 px-3 py-2 border border-slate-200 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 cursor-pointer transition">
+                        <Upload size={14} /> {brandLogoPreview ? 'Change logo' : 'Upload logo'}
+                      </label>
+                      <input id="brandLogoUpload" type="file" accept="image/*" className="hidden" onChange={handleBrandLogo} />
+                    </div>
+                    <p className="text-xs text-slate-400 mt-1.5">Shown next to the brand name on the site (PNG with transparent background works best)</p>
                   </div>
                 )}
               </Section>

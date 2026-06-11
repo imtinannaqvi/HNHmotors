@@ -34,16 +34,15 @@ if (cars.length === 0) return null;
     <section className="bg-gray-50 py-16">
       <div className="max-w-7xl mx-auto px-4">
 
-        {/* Header always shows so we know the component mounted */}
         <div className="text-center mb-10">
-          <h2 className="text-3xl font-black text-gray-900 uppercase tracking-tight">Special Offers</h2>
+          <h2 className="text-2xl font-black text-gray-900  tracking-tight">Special Offers</h2>
           <div className="flex items-center justify-center gap-2 mt-3">
             <div className="h-0.5 w-12 bg-orange-500" />
             <div className="w-2 h-2 rounded-full bg-orange-500" />
             <div className="h-0.5 w-12 bg-orange-500" />
           </div>
           <p className="text-sm text-gray-400 mt-3">
-            {loading ? 'Loading...' : `${cars.length} special offer(s)`}
+            {loading }
           </p>
         </div>
 

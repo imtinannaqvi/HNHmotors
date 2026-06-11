@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from '../api/axios.js';
-import { ArrowLeft, Car, ChevronLeft, ChevronRight, Phone, Mail, CheckCircle } from 'lucide-react';
-
+import { ArrowLeft, Car, ChevronLeft, ChevronRight, Phone, Mail, CheckCircle, X } from 'lucide-react';
 const API_BASE = 'http://localhost:5000';
 
 const CarDetails = () => {
@@ -16,6 +15,7 @@ const CarDetails = () => {
   const [query, setQuery]     = useState({ name: '', email: '', phone: '', location: '', message: '', remarks: '' });
   const [sending, setSending] = useState(false);
   const [sent, setSent]       = useState(false);
+  const [lightbox, setLightbox] = useState(false);
 
   useEffect(() => {
     setActiveImg(0);
@@ -67,8 +67,7 @@ const CarDetails = () => {
       setSending(false);
     }
   };
-
-  return (
+return (
     <div className="max-w-6xl mx-auto px-4 py-8">
 
       {/* Back */}
@@ -86,7 +85,8 @@ const CarDetails = () => {
               <img key={activeImg}
                 src={`${API_BASE}/${images[activeImg]}`}
                 alt={car.title}
-                className="w-full h-full object-cover"
+                onClick={() => setLightbox(true)}
+                className="w-full h-full object-cover cursor-zoom-in"
                 style={{ animation: 'fadeIn 0.4s ease' }}
               />
             ) : (
@@ -317,6 +317,54 @@ const CarDetails = () => {
           </div>
         </div>
       </div>
+
+      {/* ── Fullscreen image lightbox ── */}
+      {lightbox && images.length > 0 && (
+        <div
+          className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center"
+          style={{ animation: 'fadeIn 0.25s ease' }}
+          onClick={() => setLightbox(false)}>
+
+          {/* Close — top left */}
+          <button
+            onClick={() => setLightbox(false)}
+            className="absolute top-4 left-4 w-11 h-11 flex items-center justify-center rounded-full bg-white/10 hover:bg-orange-500 text-white transition-all duration-300 z-10"
+            aria-label="Close">
+            <X size={22} />
+          </button>
+
+          {/* Counter — top right */}
+          {images.length > 1 && (
+            <span className="absolute top-5 right-5 text-white/80 text-sm font-semibold">
+              {activeImg + 1} / {images.length}
+            </span>
+          )}
+
+          {/* Image (clicking it doesn't close) */}
+          <img
+            src={`${API_BASE}/${images[activeImg]}`}
+            alt={car.title}
+            onClick={(e) => e.stopPropagation()}
+            className="max-w-[92vw] max-h-[88vh] object-contain select-none"
+          />
+
+          {/* Prev / Next inside lightbox */}
+          {images.length > 1 && (
+            <>
+              <button
+                onClick={(e) => { e.stopPropagation(); prev(); }}
+                className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center rounded-full bg-white/10 hover:bg-orange-500 text-white transition-all duration-300">
+                <ChevronLeft size={26} />
+              </button>
+              <button
+                onClick={(e) => { e.stopPropagation(); next(); }}
+                className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center rounded-full bg-white/10 hover:bg-orange-500 text-white transition-all duration-300">
+                <ChevronRight size={26} />
+              </button>
+            </>
+          )}
+        </div>
+      )}
 
       <style>{`@keyframes fadeIn { from { opacity:0 } to { opacity:1 } }`}</style>
     </div>

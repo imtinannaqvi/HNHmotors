@@ -50,6 +50,10 @@ const EditCar = () => {
   const [discountedPrice, setDiscountedPrice] = useState('');
   const [offerLabel,      setOfferLabel]      = useState('');
 
+  const [brandLogoFile,    setBrandLogoFile]    = useState(null);
+  const [brandLogoPreview, setBrandLogoPreview] = useState('');
+  const [logoRemoved,      setLogoRemoved]      = useState(false);
+
   useEffect(() => {
     const fetchCar = async () => {
       try {
@@ -72,6 +76,7 @@ const EditCar = () => {
         setIsSpecialOffer(data.isSpecialOffer || false);
         setDiscountedPrice(data.discountedPrice || '');
         setOfferLabel(data.offerLabel || '');
+        if (data.brandLogo) setBrandLogoPreview(`${API_BASE}/${data.brandLogo}`);
       } catch (err) {
         alert('Failed to load car: ' + (err.response?.data?.message || err.message));
         navigate('/admin/manage-cars');
@@ -120,11 +125,26 @@ const EditCar = () => {
       setValueInput('');
     }
   };
+  const handleBrandLogo = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setBrandLogoFile(file);
+    setBrandLogoPreview(URL.createObjectURL(file));
+    setLogoRemoved(false);
+    e.target.value = '';
+  };
+  const removeBrandLogo = () => {
+    setBrandLogoFile(null);
+    setBrandLogoPreview('');
+    setLogoRemoved(true);
+  };
   const removeDetail = (i) => setDetails(prev => prev.filter((_, idx) => idx !== i));
 
   const discountPct = formData.price && discountedPrice
     ? Math.round((1 - discountedPrice / formData.price) * 100)
     : null;
+
+    const brandDetail = details.find(d => d.label.toLowerCase() === 'brand');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -149,6 +169,10 @@ const EditCar = () => {
     data.append('isSpecialOffer', isSpecialOffer);
     if (isSpecialOffer && discountedPrice) data.append('discountedPrice', discountedPrice);
     if (isSpecialOffer && offerLabel)      data.append('offerLabel', offerLabel);
+    
+    if (brandLogoFile) data.append('brandLogo', brandLogoFile);
+    if (logoRemoved && !brandLogoFile) data.append('removeBrandLogo', 'true');
+
 
     try {
       const token = localStorage.getItem('token');
@@ -170,7 +194,7 @@ const EditCar = () => {
     </div>
   );
 
-  return (
+ return (
     <div className="min-h-screen bg-slate-100">
       <div className="max-w-5xl mx-auto px-4 py-8">
 
@@ -294,6 +318,35 @@ const EditCar = () => {
                 ) : (
                   <div className="text-center py-6 border border-dashed border-slate-200 rounded-xl">
                     <p className="text-xs text-slate-400">Type a label and value, then click Add</p>
+                  </div>
+                )}
+
+                {/* Brand logo upload — appears once a Brand detail exists */}
+                {brandDetail && (
+                  <div className="mt-4 pt-4 border-t border-slate-100">
+                    <label className={labelCls}>Brand logo for "{brandDetail.value}"</label>
+                    <div className="flex items-center gap-3">
+                      {brandLogoPreview ? (
+                        <div className="relative">
+                          <img src={brandLogoPreview} alt="Brand logo"
+                            className="h-12 w-12 object-contain border border-slate-200 rounded-xl p-1 bg-white" />
+                          <button type="button" onClick={removeBrandLogo}
+                            className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition">
+                            <X size={11} />
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="h-12 w-12 border border-dashed border-slate-300 rounded-xl flex items-center justify-center bg-slate-50 text-slate-300 text-[9px]">
+                          Logo
+                        </div>
+                      )}
+                      <label htmlFor="brandLogoUpload"
+                        className="flex items-center gap-2 px-3 py-2 border border-slate-200 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 cursor-pointer transition">
+                        <Upload size={14} /> {brandLogoPreview ? 'Change logo' : 'Upload logo'}
+                      </label>
+                      <input id="brandLogoUpload" type="file" accept="image/*" className="hidden" onChange={handleBrandLogo} />
+                    </div>
+                    <p className="text-xs text-slate-400 mt-1.5">Shown next to the brand name on the site</p>
                   </div>
                 )}
               </Section>

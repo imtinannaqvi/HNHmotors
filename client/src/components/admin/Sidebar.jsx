@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, LayoutDashboard, Car, PlusCircle, Settings, ShieldCheck, Users, Tag, Inbox } from 'lucide-react';
+import { Menu, X, LayoutDashboard, Car, PlusCircle, Settings, ShieldCheck, Users, Tag, Inbox, Home } from 'lucide-react';
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(true);
@@ -53,6 +53,15 @@ const Sidebar = () => {
           );
         })}
       </nav>
+
+      {/* View Site — back to the public homepage */}
+      <div className="px-3 pb-3">
+        <Link to="/"
+          className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-400 hover:bg-gray-800 hover:text-white transition-all border border-gray-800 ${!isOpen ? 'justify-center' : ''}`}>
+          <Home size={18} className="flex-shrink-0" />
+          {isOpen && <span className="whitespace-nowrap">View Site</span>}
+        </Link>
+      </div>
 
       {/* Footer */}
       {isOpen && (

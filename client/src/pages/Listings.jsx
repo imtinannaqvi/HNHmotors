@@ -3,6 +3,8 @@ import api from '../api/axios.js';
 import CarCard from '../components/CarCard';
 import { Search, ChevronDown, ChevronUp, SlidersHorizontal, X } from 'lucide-react';
 
+const API_BASE = 'http://localhost:5000';
+
 // ── Helpers (module scope) ──
 const getDetail = (car, key) => {
   if (!car.details || typeof car.details !== 'object') return '';
@@ -27,12 +29,16 @@ const AccordionSection = ({ title, isOpen, onToggle, children }) => (
   </div>
 );
 
-const OptionRow = ({ label, active, onClick }) => (
+const OptionRow = ({ label, active, onClick, logo }) => (
   <button onClick={onClick}
-    className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+    className={`w-full flex items-center gap-2 text-left px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
       active ? 'bg-orange-500 text-white' : 'text-gray-600 hover:bg-orange-50 hover:text-orange-600 hover:translate-x-0.5'
     }`}>
-    {label}
+    {logo && (
+  <img src={`${API_BASE}/${logo}`} alt=""
+    className={`h-12 w-12 rounded-full object-contain bg-white border border-gray-200 p-1 flex-shrink-0 ${active ? 'brightness-0 invert' : ''}`} />
+)}
+{label}
   </button>
 );
 
@@ -73,10 +79,18 @@ const Listings = () => {
     return [...set].sort();
   }, [cars]);
 
+  // Brands with their logo (first car found with a logo for that brand)
   const brandOptions = useMemo(() => {
-    const set = new Set();
-    cars.forEach(c => { const v = getDetail(c, 'brand'); if (v) set.add(v); });
-    return [...set].sort();
+    const map = {};
+    cars.forEach(c => {
+      const v = getDetail(c, 'brand');
+      if (!v) return;
+      if (!(v in map)) map[v] = '';
+      if (!map[v] && c.brandLogo) map[v] = c.brandLogo;
+    });
+    return Object.entries(map)
+      .map(([name, logo]) => ({ name, logo }))
+      .sort((a, b) => a.name.localeCompare(b.name));
   }, [cars]);
 
   const filteredCars = useMemo(() => {
@@ -104,7 +118,7 @@ const Listings = () => {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-black text-gray-900 uppercase tracking-tight">Available Listings</h1>
+          <h1 className="text-2xl font-black text-gray-900 tracking-tight">Available Listings</h1>
           {!loading && <p className="text-sm text-gray-400 mt-0.5">{filteredCars.length} vehicles found</p>}
         </div>
         <button onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -153,7 +167,9 @@ const Listings = () => {
                 {brandOptions.length > 0 ? (
                   <div className="flex flex-col gap-1">
                     {brandOptions.map(b => (
-                      <OptionRow key={b} label={b} active={brand === b} onClick={() => setBrand(brand === b ? '' : b)} />
+                      <OptionRow key={b.name} label={b.name} logo={b.logo}
+                        active={brand === b.name}
+                        onClick={() => setBrand(brand === b.name ? '' : b.name)} />
                     ))}
                   </div>
                 ) : <p className="text-xs text-gray-400 px-3">No brands available</p>}
@@ -210,7 +226,7 @@ const Listings = () => {
                 <div className="flex justify-center mt-10">
                   <button onClick={() => setShowAll(p => !p)}
                     className="px-8 py-3 bg-gray-900 text-white text-sm font-bold rounded-xl transition-all duration-300 hover:bg-black hover:-translate-y-0.5 hover:shadow-lg">
-                    {showAll ? 'Show less' : `Show more cars (${filteredCars.length - 6} more)`}
+                    {showAll ? 'Show less' : `Show more `}
                   </button>
                 </div>
               )}

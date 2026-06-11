@@ -23,6 +23,7 @@ const carSchema = new mongoose.Schema({
 
   // ── Flags ─────────────────────────────────────────────────
   isFeatured: { type: Boolean, default: false },
+  brandLogo: { type: String, default: '' },
 
 }, { timestamps: true });
 

@@ -9,8 +9,14 @@ const Navbar = () => {
   const navigate     = useNavigate();
   const { pathname } = useLocation();
 
-  const token   = localStorage.getItem('token');
-  const user    = JSON.parse(localStorage.getItem('user') || 'null');
+  const token = localStorage.getItem('token');
+  let user = null;
+  try {
+    const raw = localStorage.getItem('user');
+    user = raw && raw !== 'undefined' ? JSON.parse(raw) : null;
+  } catch {
+    user = null;
+  }
   const isAdmin = user?.role === 'admin';
 
   useEffect(() => {
@@ -53,21 +59,21 @@ const Navbar = () => {
         <div className="max-w-5xl mx-auto flex items-center justify-between gap-6">
 
           {/* Logo */}
-<Link to="/" className="flex-shrink-0 transition-transform duration-300 hover:scale-[1.04]">
-  {logo ? (
-    <div className="w-16 h-16 rounded-full border-2 border-orange-500 p-1 bg-white overflow-hidden flex items-center justify-center shadow-sm">
-      <img src={`http://localhost:5000/${logo}`} alt="Logo"
-        className="w-full h-full object-contain rounded-full" />
-    </div>
-  ) : (
-    <div className="flex items-center gap-1">
-      <span style={{ fontStyle: 'italic', fontWeight: 900, fontSize: '28px', color: '#111', letterSpacing: '-1px', fontFamily: 'Georgia, serif' }}>
-        <span style={{ color: '#e85d04' }}>H</span>NH
-      </span>
-      <span style={{ fontWeight: 300, fontSize: '28px', color: '#111', letterSpacing: '2px', marginLeft: '6px' }}>MOTORS</span>
-    </div>
-  )}
-</Link>
+          <Link to="/" className="flex-shrink-0 transition-transform duration-300 hover:scale-[1.04]">
+            {logo ? (
+              <div className="w-16 h-16 rounded-full border-2 border-orange-500 p-1 bg-white overflow-hidden flex items-center justify-center shadow-sm">
+                <img src={`http://localhost:5000/${logo}`} alt="Logo"
+                  className="w-full h-full object-contain rounded-full" />
+              </div>
+            ) : (
+              <div className="flex items-center gap-1">
+                <span style={{ fontStyle: 'italic', fontWeight: 900, fontSize: '28px', color: '#111', letterSpacing: '-1px', fontFamily: 'Georgia, serif' }}>
+                  <span style={{ color: '#e85d04' }}>H</span>NH
+                </span>
+                <span style={{ fontWeight: 300, fontSize: '28px', color: '#111', letterSpacing: '2px', marginLeft: '6px' }}>MOTORS</span>
+              </div>
+            )}
+          </Link>
 
           {/* Center: location + phone */}
           <div className="hidden md:flex items-center gap-8 flex-1 justify-center">
@@ -132,7 +138,6 @@ const Navbar = () => {
               className="relative px-5 py-3 text-sm font-semibold tracking-wide transition-colors duration-200 group"
               style={{ color: isActive(to) ? '#e85d04' : '#222', letterSpacing: '0.05em' }}>
               {label}
-              {/* underline grow */}
               <span
                 className="absolute left-1/2 -translate-x-1/2 bottom-1.5 h-0.5 bg-orange-500 transition-all duration-300"
                 style={{ width: isActive(to) ? '60%' : '0%' }}

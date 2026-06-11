@@ -59,8 +59,8 @@ const FaqPreview = () => {
         {/* View all */}
         <div className="text-center mt-10">
           <Link to="/faqs"
-            className="inline-block px-8 py-3 bg-gray-900 text-white text-sm font-bold uppercase tracking-wide rounded-xl transition-all duration-300 hover:bg-black hover:-translate-y-0.5 hover:shadow-lg">
-            View all FAQs
+            className="inline-block px-6 py-3 bg-gray-900 text-white text-sm font-bold uppercase tracking-wide rounded-xl transition-all duration-300 hover:bg-black hover:-translate-y-0.5 hover:shadow-lg">
+            View all
           </Link>
         </div>
       </div>

@@ -71,9 +71,10 @@ const AboutUs = () => {
             </div>
           </div>
           <div className="space-y-4 text-sm text-gray-600 leading-relaxed">
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-            <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-            <p>This is placeholder content. Replace it with the real history, mission, and values of HNH Motors before going live.</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+            This is placeholder content. Replace it with the real history, mission, and values of HNH Motors before going live.
+            </p>
           </div>
         </div>
       </section>
@@ -89,14 +90,14 @@ const AboutUs = () => {
               <div className="h-0.5 w-12 bg-orange-500" />
             </div>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {values.map(({ title, des }, i) => (
               <div key={i}
-                className="animate-fade-up group border border-gray-100 rounded-2xl p-6 transition-all duration-300 hover:shadow-xl hover:border-orange-200 hover:-translate-y-1"
+                className="animate-fade-up w-[300px] group border border-gray-100 rounded-2xl p-3 transition-all duration-300 hover:shadow-xl hover:border-orange-200 hover:-translate-y-1"
                 style={{ animationDelay: `${i * 90}ms`, animationFillMode: 'backwards' }}>
                 <h3 className="text-sm font-black uppercase tracking-wide text-gray-900 mb-2">{title}</h3>
                 <div className="w-8 h-0.5 bg-orange-500 mb-3 transition-all duration-300 group-hover:w-12" />
-                <p className="text-sm text-gray-500 leading-relaxed">{des}</p>
+                <p className="text-md text-gray-500 leading-relaxed">{des}</p>
               </div>
             ))}
           </div>
@@ -104,12 +105,12 @@ const AboutUs = () => {
       </section>
 
       {/* CTA */}
-      <section className="py-16 px-4 bg-gray-900 text-white text-center">
-        <div className="max-w-2xl mx-auto">
+      <section className="py-12 px-4 bg-gray-900 text-white text-center mb-3">
+        <div className="max-w-xl mx-auto">
           <h2 className="text-2xl font-black uppercase tracking-tight mb-3">Ready to find your next car?</h2>
           <p className="text-gray-400 text-sm mb-6">Browse our latest listings or get in touch with our team today.</p>
           <div className="flex items-center justify-center gap-3">
-            <Link to="/listings"
+            <Link to="/"
               className="px-6 py-3 bg-orange-500 text-white text-sm font-bold uppercase tracking-wide rounded-xl transition-all duration-300 hover:bg-orange-600 hover:-translate-y-0.5 hover:shadow-lg">
               View Listings
             </Link>

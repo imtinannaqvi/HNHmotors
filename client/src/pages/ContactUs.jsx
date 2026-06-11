@@ -28,9 +28,9 @@ const ContactUs = () => {
     <div className="bg-white">
 
       {/* Hero */}
-      <section className="bg-gray-900 text-white py-20 px-4">
-        <div className="max-w-4xl mx-auto text-center animate-fade-up">
-          <h1 className="text-4xl font-black uppercase tracking-tight mb-4">Contact Us</h1>
+      <section className="bg-gray-900 text-white py-20 px-4 ">
+        <div className="max-w-3xl mx-auto text-center animate-fade-up">
+          <h1 className="text-2xl font-black uppercase tracking-tight mb-4">Contact Us</h1>
           <div className="flex items-center justify-center gap-2 mb-6">
             <div className="h-0.5 w-12 bg-orange-500" />
             <div className="w-2 h-2 rounded-full bg-orange-500" />
@@ -49,7 +49,7 @@ const ContactUs = () => {
 
           {/* Contact info */}
           <div>
-            <h2 className="text-2xl font-black text-gray-900 uppercase tracking-tight mb-3">Get in touch</h2>
+            <h2 className="text-xl font-black text-gray-900  mb-3">Get in touch</h2>
             <div className="w-10 h-0.5 bg-orange-500 mb-6" />
             <div className="space-y-5">
               {info.map(({ icon: Icon, label, value }, i) => (

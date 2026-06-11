@@ -83,6 +83,7 @@ export const getCarById = async (req, res) => {
 };
 
 // ── POST create car ───────────────────────────────────────
+// ── POST create car ───────────────────────────────────────
 export const createCar = async (req, res) => {
   try {
     const {
@@ -91,10 +92,13 @@ export const createCar = async (req, res) => {
       isFeatured, isSpecialOffer, discountedPrice, offerLabel,
     } = req.body;
 
-    const images = req.files
-      ? req.files.map(f => `uploads/cars/${f.filename}`)
-      : [];
+    // req.files is now an OBJECT: { images: [...], brandLogo: [...] }
+    const imageFiles = req.files?.images || [];
+    const images = imageFiles.map(f => `uploads/cars/${f.filename}`);
     const thumbnail = images[0] || '';
+
+    const logoFile  = req.files?.brandLogo?.[0];
+    const brandLogo = logoFile ? `uploads/cars/${logoFile.filename}` : '';
 
     const car = await Car.create({
       title,
@@ -103,6 +107,7 @@ export const createCar = async (req, res) => {
       features:        features ? JSON.parse(features) : [],
       images,
       thumbnail,
+      brandLogo,
       isFeatured:      isFeatured === 'true',
       isSpecialOffer:  isSpecialOffer === 'true',
       discountedPrice: discountedPrice ? Number(discountedPrice) : null,
@@ -131,26 +136,31 @@ export const updateCar = async (req, res) => {
     updatedData.isSpecialOffer  = req.body.isSpecialOffer === 'true';
     updatedData.discountedPrice = req.body.discountedPrice ? Number(req.body.discountedPrice) : null;
 
+    // req.files is now an OBJECT: { images: [...], brandLogo: [...] }
+    const imageFiles = req.files?.images || [];
+
+    // ── Brand logo: replace only if a new one was uploaded ──
+    const logoFile = req.files?.brandLogo?.[0];
+    if (logoFile) updatedData.brandLogo = `uploads/cars/${logoFile.filename}`;
+    if (req.body.removeBrandLogo === 'true') updatedData.brandLogo = '';
+
     // ── Images ──
     if (req.body.existingImages !== undefined) {
       const kept  = JSON.parse(req.body.existingImages);
-      const added = req.files ? req.files.map(f => `uploads/cars/${f.filename}`) : [];
+      const added = imageFiles.map(f => `uploads/cars/${f.filename}`);
       const finalImages = [...kept, ...added];
       updatedData.images    = finalImages;
       updatedData.thumbnail = finalImages[0] || '';
-    } else if (req.files && req.files.length > 0) {
-      const added = req.files.map(f => `uploads/cars/${f.filename}`);
+    } else if (imageFiles.length > 0) {
+      const added = imageFiles.map(f => `uploads/cars/${f.filename}`);
       updatedData.images    = added;
       updatedData.thumbnail = added[0];
     }
 
     delete updatedData.existingImages;
+    delete updatedData.removeBrandLogo;
 
-    const updated = await Car.findByIdAndUpdate(
-      req.params.id,
-      updatedData,
-      { new: true }
-    );
+    const updated = await Car.findByIdAndUpdate(req.params.id, updatedData, { new: true });
 
     res.json({ message: 'Car updated successfully', car: updated });
   } catch (err) {

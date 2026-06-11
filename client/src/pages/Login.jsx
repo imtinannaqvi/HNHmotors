@@ -11,18 +11,24 @@ const Login = () => {
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const { data } = await api.post('/auth/login', formData);
-      localStorage.setItem('token', data.token);
-      navigate('/admin');
-    } catch (err) {
-      alert(err.response?.data?.message || 'Login failed');
-    } finally {
-      setLoading(false);
-    }
-  };
+  e.preventDefault();
+  setLoading(true);
+  try {
+    const { data } = await api.post('/auth/login', formData);
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('user', JSON.stringify({
+      _id:   data._id,
+      name:  data.name,
+      email: data.email,
+      role:  data.role,
+    }));
+    navigate(data.role === 'admin' ? '/admin' : '/');
+  } catch (err) {
+    alert(err.response?.data?.message || 'Login failed');
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
@@ -42,7 +48,7 @@ const Login = () => {
             <div className="w-1.5 h-1.5 rounded-full bg-orange-500" />
             <div className="h-0.5 w-10 bg-orange-500" />
           </div>
-          <p className="text-gray-500 text-sm">Sign in to your admin dashboard</p>
+          <p className="text-gray-500 text-sm">Sign in to your account</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
@@ -55,7 +61,7 @@ const Login = () => {
                 name="email"
                 onChange={handleChange}
                 className="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-200 outline-none transition focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
-                placeholder="admin@example.com"
+                placeholder="you@example.com"
                 required
               />
             </div>
