@@ -20,7 +20,7 @@ const Special = () => {
   useEffect(() => {
     api.get('/cars/special')
       .then(({ data }) => {
-        console.log('SPECIAL DATA:', data);
+        // console.log('SPECIAL DATA:', data);
         setCars(Array.isArray(data) ? data : (data.cars || []));
       })
       .catch(err => console.error('SPECIAL ERROR:', err))
