@@ -1,11 +1,8 @@
 import axios from "axios";
 
 const api = axios.create({
-  // Use a relative path so Vercel can safely proxy the requests
-  baseURL: "/api", 
-  headers: {
-    "Content-Type": "application/json",
-  },
+  baseURL: "http://176.42.35.146:5000/api",
+  headers: { "Content-Type": "application/json" },
 });
 
 // Add JWT token automatically
