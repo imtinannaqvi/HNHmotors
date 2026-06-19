@@ -28,7 +28,7 @@ const CarCard = ({ car }) => {
   return (
     <div
       onClick={() => navigate(`/car/${car._id}`)}
-      className="bg-white border border-gray-100 rounded-2xl overflow-hidden transition-all duration-300 group hover:shadow-xl hover:border-orange-200 hover:-translate-y-1 cursor-pointer">
+      className="bg-white border border-gray-100 rounded-xl overflow-hidden transition-all duration-300 group hover:shadow-xl hover:border-orange-200 hover:-translate-y-1 cursor-pointer">
 
       {/* Image */}
       <div className="relative h-52 w-full overflow-hidden bg-gray-100">
