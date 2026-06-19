@@ -54,7 +54,6 @@ const AdminDashboard = () => {
 
       {/* Header */}
       <div>
-        <p className="text-xs text-gray-400 mb-0.5">HNH Motors</p>
         <h1 className="text-xl font-bold text-gray-900">Dashboard overview</h1>
       </div>
 
