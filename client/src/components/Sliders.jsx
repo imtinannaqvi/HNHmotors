@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const cars = [
-  { tag: '2026 Model', name: 'BMW',  image: '/bmw.jpg',  desc: 'The ultimate driving machine.',     price: '$85,000', id: null, color: '#e85d04', justify: 'left'  },
+  { tag: '2026 Model', name: 'BMW',  image: '/bm.jpg',  desc: 'The ultimate driving machine.',     price: '$85,000', id: null, color: '#e85d04', justify: 'left'  },
   { tag: '2026 Model', name: 'Audi', image: '/audi.jpg', desc: 'Electric innovation redefined.',     price: '$60,000', id: null, color: '#e85d04', justify: 'right' },
 ];
 
