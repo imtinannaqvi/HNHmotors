@@ -89,7 +89,7 @@ const ManageCars = () => {
                     <div className="w-11 h-11 bg-gray-100 rounded-xl overflow-hidden shrink-0 flex items-center justify-center border border-gray-100">
                       {car.thumbnail || car.images?.[0] ? (
                         <img
-                          src={`http://localhost:5000/${car.thumbnail || car.images[0]}`}
+                          src={`/${car.thumbnail || car.images[0]}`}
                           alt={car.title}
                           className="w-full h-full object-cover"
                         />

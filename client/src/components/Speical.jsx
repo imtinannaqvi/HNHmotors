@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/axios.js';
 
-const API_BASE = 'http://localhost:5000';
+const API_BASE = '';
 
 const getDetail = (car, key) => {
   if (!car.details || typeof car.details !== 'object') return '';

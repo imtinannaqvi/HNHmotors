@@ -3,7 +3,7 @@ import api from '../api/axios.js';
 import CarCard from '../components/CarCard';
 import { Search, ChevronDown, ChevronUp, SlidersHorizontal, X } from 'lucide-react';
 
-const API_BASE = 'http://localhost:5000';
+const API_BASE = '';
 
 // ── Helpers (module scope) ──
 const getDetail = (car, key) => {

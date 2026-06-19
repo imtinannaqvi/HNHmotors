@@ -47,7 +47,7 @@ const AdminSettings = () => {
           },
         });
         const logo = data.footer?.logo || data.navbar?.logo;
-        if (logo) setLogoPreview(`http://localhost:5000/${logo}`);
+        if (logo) setLogoPreview(`/${logo}`);
       })
       .catch(err => console.error(err))
       .finally(() => setLoading(false));
@@ -104,7 +104,7 @@ const AdminSettings = () => {
           },
         });
         const logo = updated.footer?.logo || updated.navbar?.logo;
-        if (logo) setLogoPreview(`http://localhost:5000/${logo}`);
+        if (logo) setLogoPreview(`/${logo}`);
       }
       setLogoFile(null);
       if (fileInputRef.current) fileInputRef.current.value = '';

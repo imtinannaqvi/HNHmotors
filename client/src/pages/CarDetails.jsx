@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from '../api/axios.js';
 import { ArrowLeft, Car, ChevronLeft, ChevronRight, Phone, Mail, CheckCircle, X } from 'lucide-react';
-const API_BASE = 'http://localhost:5000';
+const API_BASE = '';
 
 const CarDetails = () => {
   const { id }   = useParams();

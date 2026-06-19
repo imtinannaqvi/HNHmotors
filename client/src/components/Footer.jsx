@@ -4,7 +4,7 @@ import axios from '../api/axios.js';
 import { Mail, MessageCircle, ArrowUp } from 'lucide-react';
 import useReveal from '../hooks/useReveal.js';
 
-const API_BASE = 'http://localhost:5000';
+const API_BASE = '';
 
 // Static lists to fill the footer (temporary display only)
 const BRANDS     = ['Ford', 'Audi', 'Mercedes-Benz', 'Nissan'];

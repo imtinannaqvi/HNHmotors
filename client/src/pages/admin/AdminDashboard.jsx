@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from '../../api/axios.js';
 import { Car, Users, Mail, CheckCircle, Plus, List, Tag, PoundSterling, AlertTriangle } from 'lucide-react';
 
-const API_BASE = 'http://localhost:5000';
+const API_BASE = '';
 
 const CATEGORY_COLORS = ['#6366f1','#f59e0b','#10b981','#3b82f6','#ef4444','#8b5cf6','#ec4899','#14b8a6'];
 const BRAND_COLORS    = ['#1e293b','#334155','#475569','#64748b','#94a3b8','#cbd5e1'];

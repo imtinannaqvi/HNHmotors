@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import api from '../api/axios.js';
 import { Calendar, Fuel, Settings2, ArrowRight, Tag } from 'lucide-react';
 
-const API_BASE = 'http://localhost:5000';
+const API_BASE = '';
 
 const getDetail = (car, key) => {
   if (!car.details || typeof car.details !== 'object') return '';

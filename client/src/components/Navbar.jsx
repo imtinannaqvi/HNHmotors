@@ -59,13 +59,13 @@ const Navbar = () => {
         <div className="max-w-5xl mx-auto flex items-center justify-between gap-6">
 
           {/* Logo */}
-          <Link to="/" className="flex-shrink-0 transition-transform duration-300 hover:scale-[1.04]">
-            {logo ? (
-              <div className="w-16 h-16 rounded-full border-2 border-orange-500 p-1 bg-white overflow-hidden flex items-center justify-center shadow-sm">
-                <img src={`http://localhost:5000/${logo}`} alt="Logo"
-                  className="w-full h-full object-contain rounded-full" />
-              </div>
-            ) : (
+         <Link to="/" className="flex-shrink-0 transition-transform duration-300 hover:scale-[1.04]">
+  {logo ? (
+    <div className="w-16 h-16 rounded-full border-2 border-orange-500 p-1 bg-white overflow-hidden flex items-center justify-center shadow-sm">
+      <img src={`/${logo}`} alt="Logo"
+        className="w-full h-full object-contain rounded-full" />
+    </div>
+  ) : (
               <div className="flex items-center gap-1">
                 <span style={{ fontStyle: 'italic', fontWeight: 900, fontSize: '28px', color: '#111', letterSpacing: '-1px', fontFamily: 'Georgia, serif' }}>
                   <span style={{ color: '#e85d04' }}>H</span>NH

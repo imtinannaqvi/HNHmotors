@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import api from "../../api/axios.js";
 import { Upload, CheckCircle, Plus, X, Tag, ImageIcon, ListPlus, Sparkles } from 'lucide-react';
 
-const API_BASE = 'http://localhost:5000';
+const API_BASE = '';
 
 const inputCls = 'w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-sm text-slate-700 outline-none focus:border-slate-400 focus:ring-2 focus:ring-slate-100 transition font-medium bg-white';
 const labelCls = 'block text-[11px] font-medium uppercase tracking-wider text-slate-400 mb-2';

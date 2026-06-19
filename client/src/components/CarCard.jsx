@@ -7,7 +7,7 @@ const CarCard = ({ car }) => {
 
   if (!car) return null;
 
-  const API_BASE_URL = 'http://localhost:5000';
+  const API_BASE_URL = '';
 
   const getDetail = (...keys) => {
     if (!car.details || typeof car.details !== 'object') return '';
