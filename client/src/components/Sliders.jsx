@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const cars = [
-  { tag: '2026 Model', name: 'BMW',  image: '/bm.jpg',  desc: 'The ultimate driving machine.',     price: '$85,000', id: null, color: '#e85d04', justify: 'left'  },
-  { tag: '2026 Model', name: 'Audi', image: '/audi.jpg', desc: 'Electric innovation redefined.',     price: '$60,000', id: null, color: '#e85d04', justify: 'right' },
+  { tag: '2026 Model', name: 'BMW',  image: '/bm.jpg',  desc: 'The ultimate driving machine.', price: '$85,000', id: null, color: '#e85d04', justify: 'left'  },
+  { tag: '2026 Model', name: 'Audi', image: '/audi.jpg', desc: 'Electric innovation redefined.', price: '$60,000', id: null, color: '#e85d04', justify: 'right' },
 ];
 
 const Sliders = () => {
@@ -39,8 +39,15 @@ const Sliders = () => {
         style={{ animation: 'fadeIn 1s ease forwards, kenburns 6s ease-out forwards' }}
       />
 
-      {/* Overlay */}
-      <div className={`absolute inset-0 ${car.justify === 'right' ? 'bg-gradient-to-l' : 'bg-gradient-to-r'} from-black/85 via-black/45 to-transparent`} />
+      {/* Subtle gradient only on the text side, for readability */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: car.justify === 'right'
+            ? 'linear-gradient(to left, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0) 55%)'
+            : 'linear-gradient(to right, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0) 55%)',
+        }}
+      />
 
       {/* Slide number */}
       <div className="absolute top-6 right-6 text-xs tracking-widest text-white/40 font-medium">
