@@ -14,7 +14,7 @@ const AdminSettings = () => {
   const [logoPreview, setLogoPreview] = useState('');
   const [loading,     setLoading]     = useState(true);
   const [saving,      setSaving]      = useState(false);
-  const [toast,       setToast]       = useState(null);  // { type, message }
+  const [toast,       setToast]       = useState(null);  // { type: 'success'|'error'|'info', message }
   const fileInputRef = useRef();
 
   const showToast = (type, message) => {
@@ -69,17 +69,14 @@ const AdminSettings = () => {
 
   const handleSubmit = async () => {
     setSaving(true);
+    setToast({ type: 'info', message: 'Saving changes...' });   // instant feedback
     try {
-      const token = localStorage.getItem('token');
       const formData = new FormData();
       formData.append('data', JSON.stringify(form));
       if (logoFile) formData.append('logo', logoFile);
 
       const { data } = await axios.put('/settings', formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data',
-        },
+        headers: { 'Content-Type': 'multipart/form-data' },
       });
       showToast('success', 'Settings saved!');
 
@@ -153,9 +150,13 @@ const AdminSettings = () => {
       {/* Toast */}
       {toast && (
         <div className={`fixed top-5 right-5 z-50 flex items-center gap-2 px-4 py-3 rounded-xl shadow-lg text-sm font-semibold animate-fade-up ${
-          toast.type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+          toast.type === 'success' ? 'bg-green-500 text-white'
+          : toast.type === 'error' ? 'bg-red-500 text-white'
+          : 'bg-gray-800 text-white'
         }`}>
-          {toast.type === 'success' ? <Check size={16} /> : <X size={16} />}
+          {toast.type === 'success' ? <Check size={16} />
+           : toast.type === 'error' ? <X size={16} />
+           : <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />}
           {toast.message}
         </div>
       )}

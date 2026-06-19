@@ -21,4 +21,21 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+// If the token is expired or invalid (401), clear the session and go to login
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+
+      // Avoid a redirect loop if we're already on the login page
+      if (!window.location.pathname.includes("/login")) {
+        window.location.href = "/login";
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
 export default api;
