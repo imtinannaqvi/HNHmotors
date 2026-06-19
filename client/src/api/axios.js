@@ -1,13 +1,13 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL 
-    ? `${import.meta.env.VITE_API_URL}/api` 
-    : "http://localhost:5000/api",
+  // Use a relative path so Vercel can safely proxy the requests
+  baseURL: "/api", 
   headers: {
     "Content-Type": "application/json",
   },
 });
+
 // Add JWT token automatically
 api.interceptors.request.use(
   (config) => {
