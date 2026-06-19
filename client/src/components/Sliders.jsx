@@ -28,14 +28,14 @@ const Sliders = () => {
   const car = cars[current];
 
   return (
-    <div className="relative w-full h-[520px] overflow-hidden bg-gray-900">
+    <div className="relative w-full h-[600px] lg:h-[700px] overflow-hidden bg-gray-900">
 
       {/* Background image with slow zoom */}
       <img
         key={car.image}
         src={car.image}
         alt={car.name}
-        className="absolute inset-0 w-full h-full object-cover"
+        className="absolute inset-0 w-full h-full object-cover object-center"
         style={{ animation: 'fadeIn 1s ease forwards, kenburns 6s ease-out forwards' }}
       />
 
