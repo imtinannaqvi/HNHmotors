@@ -1,5 +1,4 @@
-import Visit from '../models/visit.js';
-
+import Visit from '../models/Visit.js';
 // POST /api/visits — public, called once when the site loads
 export const logVisit = async (req, res) => {
   try {

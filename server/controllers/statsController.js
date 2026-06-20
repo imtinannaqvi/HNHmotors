@@ -1,8 +1,8 @@
-import Car from '../models/car.js';      // adjust import names to match your files
-import User from '../models/user.js';
-import Enquiry from '../models/Enquiry.js';   // your enquiry model
-import Contact from '../models/contact.js';
-import Visit from '../models/visit.js';
+import Car from '../models/Car.js';
+import User from '../models/User.js';
+import Enquiry from '../models/Enquiry.js';
+import Contact from '../models/Contact.js';
+import Visit from '../models/Visit.js';
 
 // Build last-7-days counts for any model with a createdAt field
 const buildDailyTrend = async (Model, days = 7) => {

@@ -1,5 +1,4 @@
-import Contact from "../models/Contact.js";
-
+import Contact from '../models/Contact.js';
 // POST /api/contact — public (frontend form posts here)
 export const createContact = async (req, res) => {
   try {
