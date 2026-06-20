@@ -1,5 +1,7 @@
 import './App.css';
+import { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import api from './api/axios.js';
 
 import Footer from './components/Footer';
 import Navbar from './components/Navbar';
@@ -29,6 +31,16 @@ import Faqs from './pages/Faqs';
 import CarTabs from './components/CarTabs';
 import Logos from './components/Logos';
 
+// Logs ONE visit per page navigation (skips admin pages)
+const VisitLogger = () => {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    if (pathname.startsWith('/admin')) return;   // don't count admin visits
+    api.post('/visits', { path: pathname }).catch(() => {});
+  }, [pathname]);
+  return null;
+};
+
 const PublicLayout = ({ children }) => {
   const { pathname } = useLocation();
   const isAdmin = pathname.startsWith('/admin');
@@ -45,6 +57,7 @@ function App() {
   return (
     <Router>
       <ScrollToTop />
+      <VisitLogger />
       <PublicLayout>
         <Routes>
           <Route path="/" element={
@@ -61,7 +74,7 @@ function App() {
           <Route path="/about"    element={<AboutUs />} />
           <Route path="/contact"  element={<ContactUs />} />
           <Route path="/login"    element={<Login />} />
-<Route path="/register" element={<Register />} />
+          <Route path="/register" element={<Register />} />
           <Route path="/car/:id"  element={<CarDetails />} />
           <Route path="/faqs" element={<Faqs />} />
 
@@ -70,7 +83,7 @@ function App() {
             <Route path="add-car"           element={<AddCar />} />
             <Route path="manage-cars"       element={<ManageCars />} />
             <Route path="edit-car/:id"      element={<EditCar />} />
-            <Route path="/admin/contacts" element={<Contacts />} />
+            <Route path="contacts"          element={<Contacts />} />
             <Route path="settings"          element={<AdminSettings />} />
             <Route path="users"             element={<ManageUsers />} />
             <Route path="enquiries"         element={<Enquire />} />

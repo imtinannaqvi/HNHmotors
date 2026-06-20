@@ -36,6 +36,10 @@ export const getStats = async (req, res) => {
     const contacts  = await Contact.countDocuments();
     const visits    = await Visit.countDocuments();
 
+    // Inventory value — sum of all car prices
+    const allCars = await Car.find().select('price');
+    const inventoryValue = allCars.reduce((sum, c) => sum + (c.price || 0), 0);
+
     // Recent lists
     const recentCars  = await Car.find().sort({ createdAt: -1 }).limit(5).select('title thumbnail createdAt');
     const recentUsers = await User.find().sort({ createdAt: -1 }).limit(5).select('name email role');
@@ -54,6 +58,7 @@ export const getStats = async (req, res) => {
 
     res.json({
       cars, users, inquiries, contacts, visits,
+      inventoryValue,
       recentCars, recentUsers,
       activityTrend,
     });
