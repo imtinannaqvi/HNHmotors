@@ -225,7 +225,7 @@ const Listings = () => {
               {filteredCars.length > 6 && (
                 <div className="flex justify-center mt-10">
                   <button onClick={() => setShowAll(p => !p)}
-                    className="px-8 py-3 bg-gray-900 text-white text-sm font-bold rounded-xl transition-all duration-300 hover:bg-black hover:-translate-y-0.5 hover:shadow-lg">
+                    className="px-8 py-3 bg-gray-900 text-white text-sm font-bold rounded-md transition-all duration-300 hover:bg-black hover:-translate-y-0.5 hover:shadow-lg">
                     {showAll ? 'Show less' : `Show more `}
                   </button>
                 </div>

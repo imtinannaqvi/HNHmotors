@@ -91,7 +91,7 @@ const CarCard = ({ car }) => {
           </div>
           <Link to={`/car/${car._id}`}
             onClick={(e) => e.stopPropagation()}
-            className="px-4 py-2 text-xs font-bold text-white rounded-xl bg-orange-500 hover:bg-orange-600 transition-all duration-300 hover:-translate-y-0.5">
+            className="px-4 py-2 text-xs font-bold text-white rounded-md bg-orange-500 hover:bg-orange-600 transition-all duration-300 hover:-translate-y-0.5">
             View Details
           </Link>
         </div>
