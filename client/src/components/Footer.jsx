@@ -43,7 +43,7 @@ const Footer = () => {
       {/* Top accent bar */}
       <div className="h-1 bg-gradient-to-r from-orange-500 via-orange-400 to-orange-500" />
 
-      <div ref={revealRef} className="reveal max-w-6xl mx-auto px-6 pt-14 pb-6">
+      <div ref={revealRef} className="reveal max-w-7xl mx-auto px-4 sm:px-8 pt-14 pb-6">
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
 

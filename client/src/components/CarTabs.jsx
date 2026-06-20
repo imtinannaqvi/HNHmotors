@@ -14,7 +14,7 @@ const getDetail = (car, key) => {
 const CarTabs = () => {
   const [cars, setCars]       = useState([]);
   const [loading, setLoading] = useState(true);
-  const [tab, setTab]         = useState('used'); // 'used' | 'new'
+  const [tab, setTab]         = useState('used');
   const navigate              = useNavigate();
 
   useEffect(() => {
@@ -57,14 +57,14 @@ const CarTabs = () => {
           <div className="inline-flex bg-white border border-gray-200 rounded-md p-1 shadow-sm">
             <button
               onClick={() => setTab('used')}
-              className={`px-8 py-2.5 text-sm font-bold  tracking-wide cursor-pointer rounded-xl transition-all duration-300 ${
+              className={`px-8 py-2.5 text-sm font-bold tracking-wide cursor-pointer rounded-xl transition-all duration-300 ${
                 tab === 'used' ? 'bg-orange-500 text-white shadow' : 'text-gray-600 hover:text-gray-900'
               }`}>
               Used Cars 
             </button>
             <button
               onClick={() => setTab('new')}
-              className={`px-8 py-2.5 text-sm font-bold  tracking-wide cursor-pointer rounded-xl transition-all duration-300 ${
+              className={`px-8 py-2.5 text-sm font-bold tracking-wide cursor-pointer rounded-xl transition-all duration-300 ${
                 tab === 'new' ? 'bg-orange-500 text-white shadow' : 'text-gray-600 hover:text-gray-900'
               }`}>
               New Cars 
@@ -146,7 +146,6 @@ const CarTabs = () => {
           </p>
         )}
 
-        
       </div>
     </section>
   );

@@ -17,7 +17,6 @@ const toNumber = (val) => {
   return Number(String(val).replace(/[^0-9.]/g, ''));
 };
 
-// ── Sub-components (module scope, so inputs never remount) ──
 const AccordionSection = ({ title, isOpen, onToggle, children }) => (
   <div className="border-b border-gray-100 last:border-0">
     <button onClick={onToggle}
@@ -35,10 +34,10 @@ const OptionRow = ({ label, active, onClick, logo }) => (
       active ? 'bg-orange-500 text-white' : 'text-gray-600 hover:bg-orange-50 hover:text-orange-600 hover:translate-x-0.5'
     }`}>
     {logo && (
-  <img src={`${API_BASE}/${logo}`} alt=""
-    className={`h-12 w-12 rounded-full object-contain bg-white border border-gray-200 p-1 flex-shrink-0 ${active ? 'brightness-0 invert' : ''}`} />
-)}
-{label}
+      <img src={`${API_BASE}/${logo}`} alt=""
+        className={`h-12 w-12 rounded-full object-contain bg-white border border-gray-200 p-1 flex-shrink-0 ${active ? 'brightness-0 invert' : ''}`} />
+    )}
+    {label}
   </button>
 );
 
@@ -79,7 +78,6 @@ const Listings = () => {
     return [...set].sort();
   }, [cars]);
 
-  // Brands with their logo (first car found with a logo for that brand)
   const brandOptions = useMemo(() => {
     const map = {};
     cars.forEach(c => {

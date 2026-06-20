@@ -55,8 +55,8 @@ const Navbar = () => {
     <header className="w-full z-50">
 
       {/* ── TOP BAR ── */}
-      <div className="bg-white border-b border-gray-100 px-4 sm:px-6 py-4 shadow-sm">
-        <div className="max-w-5xl mx-auto flex items-center justify-between gap-4 sm:gap-6">
+      <div className="bg-white border-b border-gray-100 px-4 sm:px-8 py-4 shadow-sm">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4 sm:gap-6">
 
           {/* Logo */}
           <Link to="/" className="flex-shrink-0 transition-transform duration-300 hover:scale-[1.04]">

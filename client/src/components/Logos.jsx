@@ -16,15 +16,15 @@ const Logos = () => {
   const loopLogos = [...logos, ...logos]
 
   return (
-    <section className="bg-white py-15 overflow-hidden">
-      <div className="max-w-6xl mx-auto px-4">
+    <section className="bg-white py-12 overflow-hidden">
+      <div className="w-full px-4">
         <p className="text-center text-3xl font-bold italic text-black mb-8">
           Brands We Have
         </p>
 
         {/* Marquee track */}
         <div className="relative w-full overflow-hidden">
-          {/* fade edges (optional) */}
+          {/* fade edges */}
           <div className="absolute left-0 top-0 h-full w-20 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
           <div className="absolute right-0 top-0 h-full w-20 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
 
@@ -34,7 +34,7 @@ const Logos = () => {
                 <img
                   src={logo.src}
                   alt={logo.name}
-                  className="h-22 w-auto object-contain transition-transform duration-300 hover:scale-110"
+                  className="h-20 w-auto object-contain transition-transform duration-300 hover:scale-110"
                 />
               </div>
             ))}
