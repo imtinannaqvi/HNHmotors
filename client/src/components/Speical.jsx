@@ -64,7 +64,7 @@ if (cars.length === 0) return null;
             return (
               <div key={car._id}
                 onClick={() => navigate(`/car/${car._id}`)}
-                className="bg-white border border-gray-100 rounded-2xl overflow-hidden cursor-pointer group transition-all duration-300 hover:shadow-xl hover:border-orange-200 hover:-translate-y-1">
+                className="bg-white border border-gray-100 rounded-md overflow-hidden cursor-pointer group transition-all duration-300 hover:shadow-xl hover:border-orange-200 hover:-translate-y-1">
 
                 <div className="relative h-48 bg-gray-100 overflow-hidden">
                   {car.thumbnail ? (
@@ -96,7 +96,7 @@ if (cars.length === 0) return null;
                       <span className="text-lg font-black text-gray-900">£{fmt(price)}</span>
                     )}
                   </div>
-                  <button className="mt-3 w-full py-2.5 bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold rounded-xl transition-colors duration-200">
+                  <button className="mt-3 w-full py-2.5 bg-orange-500 hover:bg-orange-400 text-white text-xs font-bold rounded-md transition-colors duration-200">
                     View details
                   </button>
                 </div>

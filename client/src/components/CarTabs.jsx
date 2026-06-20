@@ -54,7 +54,7 @@ const CarTabs = () => {
 
         {/* Tabs */}
         <div className="flex justify-center mb-10">
-          <div className="inline-flex bg-white border border-gray-200 rounded-xl p-1 shadow-sm">
+          <div className="inline-flex bg-white border border-gray-200 rounded-md p-1 shadow-sm">
             <button
               onClick={() => setTab('used')}
               className={`px-8 py-2.5 text-sm font-bold  tracking-wide cursor-pointer rounded-xl transition-all duration-300 ${
@@ -85,7 +85,7 @@ const CarTabs = () => {
               return (
                 <div key={car._id}
                   onClick={() => navigate(`/car/${car._id}`)}
-                  className="animate-fade-up group flex bg-white border border-gray-100 rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-xl hover:border-orange-200 hover:-translate-y-1"
+                  className="animate-fade-up group flex bg-white border border-gray-100 rounded-md overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-xl hover:border-orange-200 hover:-translate-y-1"
                   style={{ animationDelay: `${i * 70}ms`, animationFillMode: 'backwards' }}>
 
                   {/* Image — left */}

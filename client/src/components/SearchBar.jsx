@@ -18,7 +18,7 @@ const SearchBar = () => {
   };
 
   return (
-    <div className="w-full bg-white border border-gray-200 rounded-2xl shadow-sm p-3">
+    <div className="w-full bg-white border border-gray-200 rounded-md shadow-sm p-3">
       <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-2">
 
         {/* Search input */}
@@ -36,7 +36,7 @@ const SearchBar = () => {
         <select
           value={category}
           onChange={e => setCategory(e.target.value)}
-          className="px-3 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-600 outline-none focus:border-gray-400 transition bg-white">
+          className="px-3 py-2.5 border border-gray-200 rounded-md text-sm text-gray-600 outline-none focus:border-gray-400 transition bg-white">
           <option value="">All categories</option>
           {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
         </select>
