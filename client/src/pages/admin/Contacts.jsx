@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from '../../api/axios.js';
-import { Mail, Phone, Trash2, MailOpen, MailWarning, Clock, MessageSquare } from 'lucide-react';
+import { Mail, Phone, Trash2, MailOpen, MailWarning, Clock, MessageSquare, Inbox } from 'lucide-react';
 
 const Contacts = () => {
   const [contacts, setContacts] = useState([]);
@@ -10,7 +10,6 @@ const Contacts = () => {
   const token   = localStorage.getItem('token');
   const headers = { Authorization: `Bearer ${token}` };
 
-  // Load all messages
   useEffect(() => {
     axios.get('/contact', { headers })
       .then(({ data }) => setContacts(data))
@@ -26,7 +25,9 @@ const Contacts = () => {
     return `${Math.floor(diff / 86400)}d ago`;
   };
 
-  // Mark a message read/unread
+  const fullDate = (date) =>
+    new Date(date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+
   const toggleRead = async (c) => {
     try {
       const { data } = await axios.put(`/contact/${c._id}/read`, { isRead: !c.isRead }, { headers });
@@ -36,7 +37,6 @@ const Contacts = () => {
     }
   };
 
-  // Delete a message
   const remove = async (id) => {
     if (!window.confirm('Delete this message?')) return;
     try {
@@ -61,26 +61,33 @@ const Contacts = () => {
   ];
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-3xl mx-auto">
 
       {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-xl font-bold text-gray-900">Messages</h1>
-        <p className="text-sm text-gray-400 mt-0.5">
-          {unreadCount > 0 ? `${unreadCount} unread message${unreadCount !== 1 ? 's' : ''}` : 'All caught up'}
-        </p>
+      <div className="flex items-center gap-3 mb-1">
+        <div className="w-10 h-10 rounded-xl bg-gray-900 flex items-center justify-center">
+          <Inbox size={18} className="text-white" />
+        </div>
+        <div>
+          <h1 className="text-xl font-bold text-gray-900">Messages</h1>
+          <p className="text-sm text-gray-400">
+            {unreadCount > 0 ? `${unreadCount} unread of ${contacts.length}` : `${contacts.length} message${contacts.length !== 1 ? 's' : ''}, all read`}
+          </p>
+        </div>
       </div>
 
       {/* Filter tabs */}
-      <div className="flex gap-2 mb-5">
+      <div className="flex gap-1 mt-5 mb-5 border-b border-gray-100">
         {tabs.map(t => (
           <button key={t.key} onClick={() => setFilter(t.key)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition ${
-              filter === t.key ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+            className={`flex items-center gap-2 px-4 py-2.5 text-sm font-semibold border-b-2 -mb-px transition ${
+              filter === t.key
+                ? 'border-gray-900 text-gray-900'
+                : 'border-transparent text-gray-400 hover:text-gray-600'
             }`}>
             {t.label}
             <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${
-              filter === t.key ? 'bg-white/20' : 'bg-gray-200'
+              filter === t.key ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-500'
             }`}>{t.count}</span>
           </button>
         ))}
@@ -100,53 +107,58 @@ const Contacts = () => {
         <div className="space-y-3">
           {filtered.map(c => (
             <div key={c._id}
-              className={`bg-white border rounded-2xl p-5 shadow-sm transition ${
-                c.isRead ? 'border-gray-100' : 'border-l-4 border-l-orange-400 border-gray-100'
+              className={`rounded-2xl border bg-white overflow-hidden transition hover:shadow-sm ${
+                c.isRead ? 'border-gray-100' : 'border-gray-200 ring-1 ring-orange-100'
               }`}>
 
-              {/* Top row: avatar + name/email + status + time */}
-              <div className="flex items-start gap-3">
-                <div className="w-10 h-10 bg-gray-900 rounded-full flex items-center justify-center flex-shrink-0">
+              {/* Card header — sender + time */}
+              <div className={`flex items-center gap-3 px-5 py-3.5 border-b ${
+                c.isRead ? 'border-gray-50' : 'border-orange-50 bg-orange-50/40'
+              }`}>
+                <div className="w-9 h-9 bg-gray-900 rounded-full flex items-center justify-center flex-shrink-0">
                   <span className="text-white text-sm font-bold">{c.name?.charAt(0).toUpperCase()}</span>
                 </div>
-
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <p className="text-sm font-bold text-gray-900">{c.name}</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-bold text-gray-900 truncate">{c.name}</p>
                     {!c.isRead && (
-                      <span className="text-[10px] font-bold bg-orange-50 text-orange-500 px-2 py-0.5 rounded-full">NEW</span>
+                      <span className="text-[9px] font-bold bg-orange-500 text-white px-1.5 py-0.5 rounded-full uppercase tracking-wide">New</span>
                     )}
                   </div>
-                  <div className="flex items-center gap-3 text-xs text-gray-400 mt-0.5 flex-wrap">
-                    <span className="flex items-center gap-1"><Mail size={11} /> {c.email}</span>
-                    {c.phone && <span className="flex items-center gap-1"><Phone size={11} /> {c.phone}</span>}
-                    <span className="flex items-center gap-1"><Clock size={11} /> {timeAgo(c.createdAt)}</span>
-                  </div>
+                  <p className="text-xs text-gray-400 truncate">{c.email}</p>
+                </div>
+                <div className="text-right flex-shrink-0">
+                  <p className="text-xs font-medium text-gray-500">{timeAgo(c.createdAt)}</p>
+                  <p className="text-[10px] text-gray-300">{fullDate(c.createdAt)}</p>
                 </div>
               </div>
 
-              {/* Subject */}
-              {c.subject && (
-                <p className="text-sm font-semibold text-gray-800 mt-3">{c.subject}</p>
-              )}
-
-              {/* Message */}
-              <div className="mt-2 bg-gray-50 rounded-xl p-3">
+              {/* Card body — subject + message */}
+              <div className="px-5 py-4">
+                {c.subject && (
+                  <p className="text-sm font-semibold text-gray-900 mb-1.5">{c.subject}</p>
+                )}
                 <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-line">{c.message}</p>
+
+                {c.phone && (
+                  <p className="flex items-center gap-1.5 text-xs text-gray-400 mt-3 pt-3 border-t border-gray-50">
+                    <Phone size={12} /> {c.phone}
+                  </p>
+                )}
               </div>
 
-              {/* Actions */}
-              <div className="flex items-center gap-2 mt-3">
+              {/* Card actions */}
+              <div className="flex items-center gap-2 px-5 py-3 bg-gray-50/70 border-t border-gray-50">
                 <button onClick={() => toggleRead(c)}
-                  className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 bg-gray-100 text-gray-600 hover:bg-gray-200 rounded-lg transition">
+                  className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 text-gray-600 hover:bg-white rounded-lg transition">
                   {c.isRead ? <><MailWarning size={13} /> Mark unread</> : <><MailOpen size={13} /> Mark read</>}
                 </button>
                 <a href={`mailto:${c.email}`}
-                  className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg transition">
+                  className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 text-blue-600 hover:bg-white rounded-lg transition">
                   <Mail size={13} /> Reply
                 </a>
                 <button onClick={() => remove(c._id)}
-                  className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 bg-red-50 text-red-500 hover:bg-red-100 rounded-lg transition ml-auto">
+                  className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 text-red-500 hover:bg-white rounded-lg transition ml-auto">
                   <Trash2 size={13} /> Delete
                 </button>
               </div>
