@@ -19,7 +19,7 @@ const Logos = () => {
     <section className="bg-white py-15 overflow-hidden">
       <div className="max-w-6xl mx-auto px-4">
         <p className="text-center text-3xl font-bold italic text-black mb-8">
-          Trusted By Brands
+          Brands We Have
         </p>
 
         {/* Marquee track */}
