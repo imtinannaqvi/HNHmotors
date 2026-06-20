@@ -16,6 +16,7 @@ import Register from './pages/Register';
 import AdminLayout from './layouts/AdminLayout';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AddCar from './pages/admin/AddCar';
+import Contacts from './pages/admin/Contacts.jsx';
 import ManageCars from './pages/admin/ManageCars';
 import AdminSettings from './pages/admin/AdminSettings';
 import EditCar from './pages/admin/EditCar';
@@ -26,6 +27,7 @@ import WhyChos from './components/WhyChos';
 import FaqPreview from './components/FaqPreview';
 import Faqs from './pages/Faqs';
 import CarTabs from './components/CarTabs';
+import Logos from './components/Logos';
 
 const PublicLayout = ({ children }) => {
   const { pathname } = useLocation();
@@ -48,6 +50,7 @@ function App() {
           <Route path="/" element={
             <>
               <Sliders />
+              <Logos/>
               <Listings />
               <CarTabs/>
               <WhyChos/>
@@ -58,7 +61,7 @@ function App() {
           <Route path="/about"    element={<AboutUs />} />
           <Route path="/contact"  element={<ContactUs />} />
           <Route path="/login"    element={<Login />} />
-          <Route path="/register" element={<Register />} />
+<Route path="/register" element={<Register />} />
           <Route path="/car/:id"  element={<CarDetails />} />
           <Route path="/faqs" element={<Faqs />} />
 
@@ -67,6 +70,7 @@ function App() {
             <Route path="add-car"           element={<AddCar />} />
             <Route path="manage-cars"       element={<ManageCars />} />
             <Route path="edit-car/:id"      element={<EditCar />} />
+            <Route path="/admin/contacts" element={<Contacts />} />
             <Route path="settings"          element={<AdminSettings />} />
             <Route path="users"             element={<ManageUsers />} />
             <Route path="enquiries"         element={<Enquire />} />

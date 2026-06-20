@@ -1,20 +1,31 @@
 import React, { useState } from 'react';
 import { MapPin, Phone, Mail, Clock, Send } from 'lucide-react';
+import api from '../api/axios.js';
 import useReveal from '../hooks/useReveal.js';
 
 const ContactUs = () => {
-  const [form, setForm] = useState({ name: '', email: '', message: '' });
+  const [form, setForm] = useState({ name: '', email: '', phone: '', subject: '', message: '' });
   const [sent, setSent] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState('');
   const bodyRef = useReveal();
 
   const handleChange = (e) => setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Contact form submitted:', form);  // TODO: wire to backend later
-    setSent(true);
-    setForm({ name: '', email: '', message: '' });
-    setTimeout(() => setSent(false), 4000);
+    setError('');
+    setSending(true);
+    try {
+      await api.post('/contact', form);
+      setSent(true);
+      setForm({ name: '', email: '', phone: '', subject: '', message: '' });
+      setTimeout(() => setSent(false), 4000);
+    } catch (err) {
+      setError(err.response?.data?.message || 'Something went wrong. Please try again.');
+    } finally {
+      setSending(false);
+    }
   };
 
   const info = [
@@ -38,7 +49,7 @@ const ContactUs = () => {
           </div>
           <p className="text-gray-300 leading-relaxed max-w-2xl mx-auto">
             Have a question about a vehicle or need a hand finding the right car? Reach out — our team
-            is happy to help. (Placeholder text.)
+            is happy to help.
           </p>
         </div>
       </section>
@@ -77,15 +88,28 @@ const ContactUs = () => {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-3">
+                {error && (
+                  <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-2.5 rounded-xl text-sm">
+                    {error}
+                  </div>
+                )}
                 <input name="name" value={form.name} onChange={handleChange} required placeholder="Your name"
                   className="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100 transition" />
                 <input name="email" type="email" value={form.email} onChange={handleChange} required placeholder="Your email"
                   className="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100 transition" />
+                <input name="phone" value={form.phone} onChange={handleChange} placeholder="Your phone (optional)"
+                  className="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100 transition" />
+                <input name="subject" value={form.subject} onChange={handleChange} placeholder="Subject (optional)"
+                  className="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100 transition" />
                 <textarea name="message" value={form.message} onChange={handleChange} rows={4} required placeholder="How can we help?"
                   className="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100 transition resize-none" />
-                <button type="submit"
-                  className="w-full flex items-center justify-center gap-2 bg-orange-500 text-white text-sm font-bold uppercase tracking-wide py-3 rounded-xl transition-all duration-300 hover:bg-orange-600 hover:-translate-y-0.5 hover:shadow-lg">
-                  <Send size={15} /> Send message
+                <button type="submit" disabled={sending}
+                  className="w-full flex items-center justify-center gap-2 bg-orange-500 text-white text-sm font-bold uppercase tracking-wide py-3 rounded-xl transition-all duration-300 hover:bg-orange-600 hover:-translate-y-0.5 hover:shadow-lg disabled:opacity-50">
+                  {sending ? (
+                    <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Sending...</>
+                  ) : (
+                    <><Send size={15} /> Send message</>
+                  )}
                 </button>
               </form>
             )}

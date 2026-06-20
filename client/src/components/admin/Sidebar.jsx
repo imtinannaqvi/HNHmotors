@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, LayoutDashboard, Car, PlusCircle, Settings, ShieldCheck, Users, Tag, Inbox, Home } from 'lucide-react';
+import { Menu, X, LayoutDashboard, Car, PlusCircle, Settings, ShieldCheck, Users, Tag, Inbox, MessageSquare, Home } from 'lucide-react';
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(true);
@@ -12,6 +12,7 @@ const Sidebar = () => {
     { name: 'Manage Cars',    path: '/admin/manage-cars',    icon: Car,             exact: false },
     { name: 'Manage Users',   path: '/admin/users',          icon: Users,           exact: false },
     { name: 'Enquiries',      path: '/admin/enquiries',      icon: Inbox,           exact: false },
+    { name: 'Messages',       path: '/admin/contacts',       icon: MessageSquare,   exact: false },
     { name: 'Special Offers', path: '/admin/special-offers', icon: Tag,             exact: false },
     { name: 'Site Settings',  path: '/admin/settings',       icon: Settings,        exact: false },
   ];

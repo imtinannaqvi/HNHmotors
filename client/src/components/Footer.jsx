@@ -84,7 +84,7 @@ const Footer = () => {
             <div className="w-8 h-0.5 bg-orange-500 mb-4" />
             <ul className="space-y-3">
               {BRANDS.map(b => (
-                <li key={b} className="text-sm font-semibold text-gray-600">{b}</li>
+                <li key={b} className="text-md font-bold text-gray-600">{b}</li>
               ))}
             </ul>
           </div>
@@ -95,7 +95,7 @@ const Footer = () => {
             <div className="w-8 h-0.5 bg-orange-500 mb-4" />
             <ul className="space-y-3">
               {CATEGORIES.map(c => (
-                <li key={c} className="text-sm font-semibold text-gray-600">{c}</li>
+                <li key={c} className="text-md font-bold text-gray-600">{c}</li>
               ))}
             </ul>
           </div>
@@ -112,7 +112,7 @@ const Footer = () => {
                 {quickLinks.map((link, i) => (
                   <li key={i}>
                     <Link to={`/${link.title.toLowerCase().replace(/\s+/g, '-')}`}
-                      className="text-sm font-semibold text-gray-600 hover:text-orange-500 hover:translate-x-1 inline-block transition-all duration-200">
+                      className="text-md font-bold text-gray-600 hover:text-orange-500 hover:translate-x-1 inline-block transition-all duration-200">
                       {link.title}
                     </Link>
                   </li>
@@ -124,13 +124,13 @@ const Footer = () => {
               <div className="space-y-3">
                 {footer.email && (
                   <a href={`mailto:${footer.email}`}
-                    className="flex items-center gap-2.5 text-sm font-semibold text-gray-600 hover:text-orange-500 transition-colors duration-200">
+                    className="flex items-center gap-2.5 text-md font-bold text-gray-600 hover:text-orange-500 transition-colors duration-200">
                     <Mail size={16} className="text-orange-500 flex-shrink-0" /> {footer.email}
                   </a>
                 )}
                 {footer.whatsappNumber && (
                   <a href={`https://wa.me/${footer.whatsappNumber}`} target="_blank" rel="noreferrer"
-                    className="flex items-center gap-2.5 text-sm font-semibold text-gray-600 hover:text-orange-500 transition-colors duration-200">
+                    className="flex items-center gap-2.5 text-md font-bold text-gray-600 hover:text-orange-500 transition-colors duration-200">
                     <MessageCircle size={16} className="text-orange-500 flex-shrink-0" /> {footer.whatsappNumber}
                   </a>
                 )}

@@ -135,7 +135,7 @@ const Navbar = () => {
         <div className="flex items-center justify-center">
           {subLinks.map(({ to, label }) => (
             <Link key={to} to={to}
-              className="relative px-5 py-3 text-sm font-semibold tracking-wide transition-colors duration-200 group"
+              className="relative px-5 py-3 text-md font-bold tracking-wide transition-colors duration-200 group"
               style={{ color: isActive(to) ? '#e85d04' : '#222', letterSpacing: '0.05em' }}>
               {label}
               <span

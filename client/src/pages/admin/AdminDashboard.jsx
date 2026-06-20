@@ -1,21 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from '../../api/axios.js';
-import { Car, Users, Mail, CheckCircle, Plus, List, Tag, PoundSterling, AlertTriangle } from 'lucide-react';
+import {
+  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend,
+} from 'recharts';
+import { Car, Users, Mail, Eye, Plus, List, Tag, PoundSterling, AlertTriangle, MessageSquare } from 'lucide-react';
 
 const API_BASE = '';
 
-const CATEGORY_COLORS = ['#6366f1','#f59e0b','#10b981','#3b82f6','#ef4444','#8b5cf6','#ec4899','#14b8a6'];
-const BRAND_COLORS    = ['#1e293b','#334155','#475569','#64748b','#94a3b8','#cbd5e1'];
-
 const AdminDashboard = () => {
-  const [stats,   setStats]   = useState({ cars: 0, users: 0, inquiries: 0, sold: 0, specialOffers: 0, inventoryValue: 0, recentCars: [], recentUsers: [], brandBreakdown: [], categoryBreakdown: [] });
+  const [stats, setStats] = useState({
+    cars: 0, users: 0, inquiries: 0, contacts: 0, visits: 0,
+    recentCars: [], recentUsers: [], activityTrend: [],
+  });
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    axios.get('/admin/stats', { headers: { Authorization: `Bearer ${token}` } })
+    axios.get('/stats', { headers: { Authorization: `Bearer ${token}` } })
       .then(({ data }) => setStats(data))
       .catch(err => console.error('Stats error:', err))
       .finally(() => setLoading(false));
@@ -29,25 +32,34 @@ const AdminDashboard = () => {
     return `${Math.floor(diff / 86400)}d ago`;
   };
 
-  const maxBrand    = Math.max(...(stats.brandBreakdown.map(b => b.count)), 1);
-  const totalCatSum = stats.categoryBreakdown.reduce((s, c) => s + c.count, 0) || 1;
+  // Format trend data: turn "2026-06-20" into "Fri" for the x-axis
+  const chartData = (stats.activityTrend || []).map((d) => {
+    const day = new Date(d.date).toLocaleDateString('en-US', { weekday: 'short' });
+    return { day, enquiries: d.enquiries || 0, contacts: d.contacts || 0, visits: d.visits || 0 };
+  });
+
+  const totalEnquiries = chartData.reduce((s, d) => s + d.enquiries, 0);
+  const totalContacts  = chartData.reduce((s, d) => s + d.contacts, 0);
+  const totalVisits    = chartData.reduce((s, d) => s + d.visits, 0);
+
+  const hasActivity = totalEnquiries + totalContacts + totalVisits > 0;
 
   const statCards = [
-    { label: 'Total cars',       value: stats.cars,                                          sub: 'in inventory',    icon: Car,           },
-    { label: 'Total users',      value: stats.users,                                         sub: 'registered',      icon: Users,         },
-    { label: 'Sold',             value: stats.sold ?? 0,                                     sub: 'cars sold',       icon: CheckCircle,   },
-    { label: 'Special offers',   value: stats.specialOffers ?? 0,                            sub: 'active deals',    icon: Tag,           },
-    { label: 'Inventory value',  value: `£${(stats.inventoryValue||0).toLocaleString()}`,    sub: 'total stock',     icon: PoundSterling, },
-    { label: 'Inquiries',        value: stats.inquiries ?? 0,                                sub: 'total received',  icon: Mail,          },
+    { label: 'Site visits',  value: stats.visits ?? 0,    sub: 'all time',       icon: Eye },
+    { label: 'Total cars',   value: stats.cars ?? 0,      sub: 'in inventory',   icon: Car },
+    { label: 'Total users',  value: stats.users ?? 0,     sub: 'registered',     icon: Users },
+    { label: 'Enquiries',    value: stats.inquiries ?? 0, sub: 'total received', icon: Mail },
+    { label: 'Contacts',     value: stats.contacts ?? 0,  sub: 'messages',       icon: MessageSquare },
+    { label: 'Inventory',    value: `£${(stats.inventoryValue || 0).toLocaleString()}`, sub: 'total stock', icon: PoundSterling },
   ];
 
   const actions = [
-    { label: 'Add new car',      icon: Plus,  path: '/admin/add-car',     primary: true  },
-    { label: 'Manage inventory', icon: List,  path: '/admin/manage-cars', primary: false },
-    { label: 'Site settings',    icon: List,  path: '/admin/settings',    primary: false },
+    { label: 'Add new car',      icon: Plus, path: '/admin/add-car',     primary: true },
+    { label: 'Manage inventory', icon: List, path: '/admin/manage-cars', primary: false },
+    { label: 'Site settings',    icon: List, path: '/admin/settings',    primary: false },
   ];
 
-  const lowStock = stats.cars < 3;
+  const lowStock = !loading && stats.cars < 3;
 
   return (
     <div className="max-w-5xl mx-auto space-y-5">
@@ -58,7 +70,7 @@ const AdminDashboard = () => {
       </div>
 
       {/* Low stock alert */}
-      {!loading && lowStock && (
+      {lowStock && (
         <div className="flex items-center gap-3 bg-amber-50 border border-amber-200 text-amber-700 px-4 py-3 rounded-xl text-sm font-medium">
           <AlertTriangle size={16} /> Low inventory — only {stats.cars} car{stats.cars !== 1 ? 's' : ''} listed.
           <button onClick={() => navigate('/admin/add-car')} className="ml-auto underline underline-offset-2 text-xs font-bold">Add now</button>
@@ -71,58 +83,78 @@ const AdminDashboard = () => {
           <div key={label} className="bg-gray-50 rounded-xl p-4 col-span-1">
             <Icon size={16} className="text-gray-400 mb-2" />
             <p className="text-[10px] text-gray-400 mb-0.5 font-medium">{label}</p>
-            <p className="text-xl font-bold text-gray-900 truncate">
-              {loading ? '—' : value}
-            </p>
+            <p className="text-xl font-bold text-gray-900 truncate">{loading ? '—' : value}</p>
             <p className="text-[10px] text-gray-400 mt-0.5">{sub}</p>
           </div>
         ))}
       </div>
 
-      {/* Row 2: Brand chart + Category donut */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-        {/* Brand bar chart */}
-        <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
-          <h2 className="text-sm font-semibold text-gray-900 mb-4">Cars by brand</h2>
-          {loading ? <div className="h-32 flex items-center justify-center"><div className="w-6 h-6 border-2 border-gray-200 border-t-gray-700 rounded-full animate-spin" /></div>
-          : stats.brandBreakdown.length === 0 ? <p className="text-sm text-gray-400 text-center py-8">No data yet</p>
-          : (
-            <div className="space-y-2.5">
-              {stats.brandBreakdown.map(({ brand, count }, i) => (
-                <div key={brand}>
-                  <div className="flex justify-between text-xs text-gray-600 mb-1 font-medium">
-                    <span>{brand}</span><span>{count}</span>
-                  </div>
-                  <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                    <div className="h-full rounded-full transition-all duration-500"
-                      style={{ width: `${(count / maxBrand) * 100}%`, background: BRAND_COLORS[i % BRAND_COLORS.length] }} />
-                  </div>
-                </div>
-              ))}
+      {/* Activity chart — visits, enquiries, contacts over last 7 days */}
+      <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
+        <div className="flex items-start justify-between mb-4 flex-wrap gap-3">
+          <div>
+            <h2 className="text-sm font-semibold text-gray-900">Activity — last 7 days</h2>
+            <p className="text-xs text-gray-400 mt-0.5">Visits, enquiries and contact messages per day</p>
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="text-right">
+              <p className="text-lg font-bold text-amber-500 leading-none">{totalVisits}</p>
+              <p className="text-[10px] text-gray-400 mt-1 flex items-center gap-1 justify-end"><Eye size={10} /> visits</p>
             </div>
-          )}
+            <div className="text-right">
+              <p className="text-lg font-bold text-indigo-600 leading-none">{totalEnquiries}</p>
+              <p className="text-[10px] text-gray-400 mt-1 flex items-center gap-1 justify-end"><Mail size={10} /> enquiries</p>
+            </div>
+            <div className="text-right">
+              <p className="text-lg font-bold text-emerald-600 leading-none">{totalContacts}</p>
+              <p className="text-[10px] text-gray-400 mt-1 flex items-center gap-1 justify-end"><MessageSquare size={10} /> contacts</p>
+            </div>
+          </div>
         </div>
 
-        {/* Category breakdown */}
-        <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
-          <h2 className="text-sm font-semibold text-gray-900 mb-4">Category breakdown</h2>
-          {loading ? <div className="h-32 flex items-center justify-center"><div className="w-6 h-6 border-2 border-gray-200 border-t-gray-700 rounded-full animate-spin" /></div>
-          : stats.categoryBreakdown.length === 0 ? <p className="text-sm text-gray-400 text-center py-8">No data yet</p>
-          : (
-            <div className="space-y-2">
-              {stats.categoryBreakdown.map(({ category, count }, i) => (
-                <div key={category} className="flex items-center gap-3">
-                  <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: CATEGORY_COLORS[i % CATEGORY_COLORS.length] }} />
-                  <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
-                    <div className="h-full rounded-full" style={{ width: `${(count / totalCatSum) * 100}%`, background: CATEGORY_COLORS[i % CATEGORY_COLORS.length] }} />
-                  </div>
-                  <span className="text-xs text-gray-500 w-16 text-right font-medium">{category} ({count})</span>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+        {loading ? (
+          <div className="h-64 flex items-center justify-center">
+            <div className="w-6 h-6 border-2 border-gray-200 border-t-gray-700 rounded-full animate-spin" />
+          </div>
+        ) : !hasActivity ? (
+          <div className="h-64 flex flex-col items-center justify-center text-center">
+            <MessageSquare size={28} className="text-gray-200 mb-2" />
+            <p className="text-sm text-gray-400">No activity recorded yet</p>
+            <p className="text-xs text-gray-300 mt-1">Visits, enquiries and messages will appear here as they come in</p>
+          </div>
+        ) : (
+          <div className="h-64 w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="gVis" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%"  stopColor="#f59e0b" stopOpacity={0.25} />
+                    <stop offset="95%" stopColor="#f59e0b" stopOpacity={0} />
+                  </linearGradient>
+                  <linearGradient id="gEnq" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%"  stopColor="#6366f1" stopOpacity={0.25} />
+                    <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
+                  </linearGradient>
+                  <linearGradient id="gCon" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%"  stopColor="#10b981" stopOpacity={0.25} />
+                    <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+                <XAxis dataKey="day" tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
+                <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} width={40} />
+                <Tooltip
+                  contentStyle={{ borderRadius: 12, border: '1px solid #e2e8f0', fontSize: 12, boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}
+                  labelStyle={{ fontWeight: 600, color: '#0f172a' }}
+                />
+                <Legend wrapperStyle={{ fontSize: 11 }} iconType="circle" iconSize={8} />
+                <Area type="monotone" dataKey="visits"    name="Visits"    stroke="#f59e0b" strokeWidth={2} fill="url(#gVis)" />
+                <Area type="monotone" dataKey="enquiries" name="Enquiries" stroke="#6366f1" strokeWidth={2} fill="url(#gEnq)" />
+                <Area type="monotone" dataKey="contacts"  name="Contacts"  stroke="#10b981" strokeWidth={2} fill="url(#gCon)" />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        )}
       </div>
 
       {/* Row 3: Recent cars + Recent users + Quick actions */}
@@ -163,9 +195,7 @@ const AdminDashboard = () => {
               {stats.recentUsers.map(user => (
                 <div key={user._id} className="flex items-center gap-3 py-2.5">
                   <div className="w-9 h-9 bg-gray-900 rounded-full flex items-center justify-center flex-shrink-0">
-                    <span className="text-white text-xs font-bold">
-                      {user.name?.charAt(0).toUpperCase()}
-                    </span>
+                    <span className="text-white text-xs font-bold">{user.name?.charAt(0).toUpperCase()}</span>
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-semibold text-gray-800 truncate">{user.name}</p>

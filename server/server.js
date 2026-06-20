@@ -12,6 +12,9 @@ import carRoutes     from './routes/cars.js';
 import adminRoutes   from './routes/adminRoutes.js';
 import settingRoutes from './routes/settingRoutes.js';
 import enquiryRoutes from './routes/enquiryRoutes.js';
+import contactRoutes from './routes/contactRoutes.js';
+import visitRoutes from './routes/visitRoutes.js';
+import statsRoutes from './routes/statsRoutes.js';
 
 dotenv.config();
 
@@ -41,6 +44,10 @@ app.use('/api/cars',     carRoutes);
 app.use('/api/admin',    adminRoutes);
 app.use('/api/settings', settingRoutes);
 app.use('/api/enquiries', enquiryRoutes);
+
+app.use('/api/contact', contactRoutes);
+app.use('/api/visits', visitRoutes);
+app.use('/api/stats', statsRoutes);
 
 // ── Global error handler ──────────────────────────────────
 app.use((err, req, res, next) => {

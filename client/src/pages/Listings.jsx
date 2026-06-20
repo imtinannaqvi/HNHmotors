@@ -119,7 +119,6 @@ const Listings = () => {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-black text-gray-900 tracking-tight">Available Listings</h1>
-          {!loading && <p className="text-sm text-gray-400 mt-0.5">{filteredCars.length} vehicles found</p>}
         </div>
         <button onClick={() => setSidebarOpen(!sidebarOpen)}
           className="md:hidden flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 transition">
