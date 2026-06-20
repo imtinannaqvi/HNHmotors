@@ -170,7 +170,7 @@ const AddCar = () => {
                         Main
                       </span>
                       <button type="button" onClick={() => removeImage(0)}
-                        className="absolute top-2 right-2 w-7 h-7 flex items-center justify-center bg-black/40 hover:bg-black/60 text-white rounded-lg transition">
+                        className="absolute top-2 right-2 w-7 h-7 flex items-center justify-center bg-black/40 hover:bg-black/60 text-white rounded-md transition">
                         <X size={14} />
                       </button>
                     </div>
@@ -186,7 +186,7 @@ const AddCar = () => {
                         </div>
                       ))}
                       <label htmlFor="imgUpload"
-                        className="h-16 flex items-center justify-center border-2 border-dashed border-slate-200 rounded-lg cursor-pointer hover:border-slate-400 text-slate-300 transition">
+                        className="h-16 flex items-center justify-center border-2 border-dashed border-slate-200 rounded-md cursor-pointer hover:border-slate-400 text-slate-300 transition">
                         <Plus size={18} />
                       </label>
                     </div>
@@ -194,7 +194,7 @@ const AddCar = () => {
                   </div>
                 ) : (
                   <label htmlFor="imgUpload"
-                    className="block border-2 border-dashed border-slate-200 rounded-xl cursor-pointer hover:border-slate-400 transition">
+                    className="block border-2 border-dashed border-slate-200 rounded-md cursor-pointer hover:border-slate-400 transition">
                     <div className="flex flex-col items-center gap-2 py-12 text-slate-300">
                       <Upload size={26} />
                       <p className="text-sm font-medium text-slate-400">Click to upload images</p>
@@ -236,7 +236,7 @@ const AddCar = () => {
                     placeholder="Value (e.g. 2022)"
                     className={inputCls} />
                   <button type="button" onClick={addDetail} disabled={!labelInput.trim() || !valueInput.trim()}
-                    className="flex items-center justify-center gap-1 px-5 py-2.5 bg-slate-700 hover:bg-slate-800 text-white text-sm font-medium rounded-xl transition flex-shrink-0 disabled:opacity-40">
+                    className="flex items-center justify-center gap-1 px-5 py-2.5 bg-slate-700 hover:bg-slate-800 text-white text-sm font-medium rounded-md transition flex-shrink-0 disabled:opacity-40">
                     <Plus size={14} /> Add
                   </button>
                 </div>
@@ -248,7 +248,7 @@ const AddCar = () => {
                         <span className="w-32 flex-shrink-0 text-xs font-medium uppercase tracking-wide text-slate-400">{d.label}</span>
                         <span className="flex-1 text-sm font-medium text-slate-700 truncate">{d.value}</span>
                         <button type="button" onClick={() => removeDetail(i)}
-                          className="flex-shrink-0 w-7 h-7 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition">
+                          className="flex-shrink-0 w-7 h-7 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-md transition">
                           <X size={14} />
                         </button>
                       </div>
@@ -275,12 +275,12 @@ const AddCar = () => {
                           </button>
                         </div>
                       ) : (
-                        <div className="h-12 w-12 border border-dashed border-slate-300 rounded-xl flex items-center justify-center bg-slate-50 text-slate-300 text-[9px]">
+                        <div className="h-12 w-12 border border-dashed border-slate-300 rounded-md flex items-center justify-center bg-slate-50 text-slate-300 text-[9px]">
                           Logo
                         </div>
                       )}
                       <label htmlFor="brandLogoUpload"
-                        className="flex items-center gap-2 px-3 py-2 border border-slate-200 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 cursor-pointer transition">
+                        className="flex items-center gap-2 px-3 py-2 border border-slate-200 rounded-md text-sm font-medium text-slate-600 hover:bg-slate-50 cursor-pointer transition">
                         <Upload size={14} /> {brandLogoPreview ? 'Change logo' : 'Upload logo'}
                       </label>
                       <input id="brandLogoUpload" type="file" accept="image/*" className="hidden" onChange={handleBrandLogo} />
@@ -299,7 +299,7 @@ const AddCar = () => {
                     placeholder="e.g. Sunroof"
                     className={`${inputCls} max-w-[240px]`} />
                   <button type="button" onClick={addFeature}
-                    className="flex items-center gap-1 px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 text-sm font-medium rounded-xl transition flex-shrink-0">
+                    className="flex items-center gap-1 px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 text-sm font-medium rounded-md transition flex-shrink-0">
                     <Plus size={14} /> Add
                   </button>
                 </div>
@@ -356,7 +356,7 @@ const AddCar = () => {
                   </span>
                 )}
                 <button type="submit" disabled={loading}
-                  className="flex items-center gap-2 px-7 py-3 bg-slate-800 hover:bg-slate-900 text-white text-sm font-medium rounded-xl transition disabled:opacity-50 shadow-sm">
+                  className="flex items-center gap-2 px-7 py-3 bg-slate-800 hover:bg-slate-900 text-white text-sm font-medium rounded-md transition disabled:opacity-50 shadow-sm">
                   {loading ? (
                     <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Publishing...</>
                   ) : 'Publish Listing'}

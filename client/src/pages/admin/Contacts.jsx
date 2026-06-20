@@ -99,7 +99,7 @@ const Contacts = () => {
           <div className="w-7 h-7 border-2 border-gray-200 border-t-gray-700 rounded-full animate-spin" />
         </div>
       ) : filtered.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-20 text-center border border-dashed border-gray-200 rounded-2xl">
+        <div className="flex flex-col items-center justify-center py-20 text-center border border-dashed border-gray-200 rounded-xl">
           <MessageSquare size={30} className="text-gray-200 mb-3" />
           <p className="text-sm text-gray-400">No messages here</p>
         </div>

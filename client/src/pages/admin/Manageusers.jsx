@@ -50,7 +50,7 @@ const ManageUsers = () => {
         <p className="text-sm text-gray-400 mt-0.5">{users.length} users registered</p>
       </div>
 
-      <div className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
+      <div className="bg-white border border-gray-100 rounded-xl shadow-sm overflow-hidden">
         <table className="w-full text-left">
           <thead>
             <tr className="bg-gray-50 border-b border-gray-100">

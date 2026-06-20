@@ -50,7 +50,7 @@ const Footer = () => {
           {/* ── Brand (spans 2 cols on large screens) ── */}
           <div className="lg:col-span-2 md:max-w-xs">
             {logo ? (
-              <img src={`${API_BASE}/${logo}`} alt="HNH Motors" className="h-14 w-auto object-contain mb-4" />
+              <img src={`${API_BASE}/${logo}`} alt="HNH Motors" className="h-20 w-auto object-contain mb-4" />
             ) : (
               <h3 className="text-gray-900 font-black text-2xl uppercase tracking-tight mb-1">HNH Motors</h3>
             )}

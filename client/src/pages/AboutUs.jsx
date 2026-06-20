@@ -110,10 +110,7 @@ const AboutUs = () => {
           <h2 className="text-2xl font-black uppercase tracking-tight mb-3">Ready to find your next car?</h2>
           <p className="text-gray-400 text-sm mb-6">Browse our latest listings or get in touch with our team today.</p>
           <div className="flex items-center justify-center gap-3">
-            <Link to="/"
-              className="px-6 py-3 bg-orange-500 text-white text-sm font-bold uppercase tracking-wide rounded-xl transition-all duration-300 hover:bg-orange-600 hover:-translate-y-0.5 hover:shadow-lg">
-              View Listings
-            </Link>
+            
             <Link to="/contact"
               className="px-6 py-3 border border-gray-700 text-white text-sm font-bold uppercase tracking-wide rounded-xl transition-all duration-300 hover:bg-gray-800 hover:-translate-y-0.5">
               Contact Us

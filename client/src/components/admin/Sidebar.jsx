@@ -21,18 +21,18 @@ const Sidebar = () => {
     link.exact ? pathname === link.path : pathname.startsWith(link.path);
 
   return (
-    <div className={`${isOpen ? 'w-64' : 'w-20'} h-screen bg-blue-400 text-white flex flex-col fixed border-r border-gray-800 transition-all duration-300 z-40`}>
+    <div className={`${isOpen ? 'w-64' : 'w-20'} h-screen bg-orange-900 text-white flex flex-col fixed border-r border-gray-800 transition-all duration-300 z-40`}>
 
       {/* Header */}
       <div className="flex items-center justify-between px-5 py-5 border-b border-gray-400">
         {isOpen && (
           <div className="flex items-center gap-2.5 overflow-hidden">
-            <ShieldCheck size={20} className="text-slate-600 flex-shrink-0" />
+            <ShieldCheck size={20} className="text-white flex-shrink-0" />
             <span className="font-bold text-sm text-white whitespace-nowrap">Admin Panel</span>
           </div>
         )}
         <button onClick={() => setIsOpen(!isOpen)}
-          className={`text-slate-600 hover:text-white transition ${!isOpen ? 'mx-auto' : ''}`}>
+          className={`text-white hover:text-slate-400 transition ${!isOpen ? 'mx-auto' : ''}`}>
           {isOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
       </div>
@@ -45,8 +45,8 @@ const Sidebar = () => {
             <Link key={name} to={path}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
                 active
-                  ? 'bg-blue-300 text-white'
-                  : 'text-white hover:bg-blue-300 hover:text-white'
+                  ? 'bg-orange-500 text-white'
+                  : 'text-white hover:bg-orange-500 hover:text-white'
               }`}>
               <Icon size={18} className="flex-shrink-0" />
               {isOpen && <span className="whitespace-nowrap">{name}</span>}
@@ -58,7 +58,7 @@ const Sidebar = () => {
       {/* View Site — back to the public homepage */}
       <div className="px-3 pb-3">
         <Link to="/"
-          className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-white hover:bg-blue-300 hover:text-white transition-all border border-gray-800 ${!isOpen ? 'justify-center' : ''}`}>
+          className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-white hover:bg-orange-500 hover:text-white transition-all border border-gray-800 ${!isOpen ? 'justify-center' : ''}`}>
           <Home size={18} className="flex-shrink-0" />
           {isOpen && <span className="whitespace-nowrap">View Site</span>}
         </Link>
@@ -67,7 +67,7 @@ const Sidebar = () => {
       {/* Footer */}
       {isOpen && (
         <div className="px-5 py-4 border-t border-gray-800">
-          <p className="text-[12px] text-hite font-bold">HNH Motors © {new Date().getFullYear()}</p>
+          <p className="text-[12px] text-white font-bold">HNH Motors © {new Date().getFullYear()}</p>
         </div>
       )}
     </div>

@@ -71,7 +71,7 @@ const AdminDashboard = () => {
 
       {/* Low stock alert */}
       {lowStock && (
-        <div className="flex items-center gap-3 bg-amber-50 border border-amber-200 text-amber-700 px-4 py-3 rounded-xl text-sm font-medium">
+        <div className="flex items-center gap-3 bg-amber-50 border border-amber-200 text-amber-700 px-4 py-3 rounded-md text-sm font-medium">
           <AlertTriangle size={16} /> Low inventory — only {stats.cars} car{stats.cars !== 1 ? 's' : ''} listed.
           <button onClick={() => navigate('/admin/add-car')} className="ml-auto underline underline-offset-2 text-xs font-bold">Add now</button>
         </div>
@@ -80,7 +80,7 @@ const AdminDashboard = () => {
       {/* Stat cards */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
         {statCards.map(({ label, value, sub, icon: Icon }) => (
-          <div key={label} className="bg-gray-50 rounded-xl p-4 col-span-1">
+          <div key={label} className="bg-gray-50 rounded-md p-4 col-span-1">
             <Icon size={16} className="text-gray-400 mb-2" />
             <p className="text-[10px] text-gray-400 mb-0.5 font-medium">{label}</p>
             <p className="text-xl font-bold text-gray-900 truncate">{loading ? '—' : value}</p>
@@ -90,7 +90,7 @@ const AdminDashboard = () => {
       </div>
 
       {/* Activity chart — visits, enquiries, contacts over last 7 days */}
-      <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
+      <div className="bg-white border border-gray-100 rounded-md p-5 shadow-sm">
         <div className="flex items-start justify-between mb-4 flex-wrap gap-3">
           <div>
             <h2 className="text-sm font-semibold text-gray-900">Activity — last 7 days</h2>
@@ -161,7 +161,7 @@ const AdminDashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 
         {/* Recent cars */}
-        <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm md:col-span-1">
+        <div className="bg-white border border-gray-100 rounded-xl p-5 shadow-sm md:col-span-1">
           <h2 className="text-sm font-semibold text-gray-900 mb-3">Recently added</h2>
           {loading ? <div className="flex items-center justify-center py-8"><div className="w-6 h-6 border-2 border-gray-200 border-t-gray-700 rounded-full animate-spin" /></div>
           : stats.recentCars?.length === 0 ? <p className="text-sm text-gray-400 text-center py-8">No cars yet</p>
@@ -186,7 +186,7 @@ const AdminDashboard = () => {
         </div>
 
         {/* Recent users */}
-        <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm md:col-span-1">
+        <div className="bg-white border border-gray-100 rounded-xl p-5 shadow-sm md:col-span-1">
           <h2 className="text-sm font-semibold text-gray-900 mb-3">Recent users</h2>
           {loading ? <div className="flex items-center justify-center py-8"><div className="w-6 h-6 border-2 border-gray-200 border-t-gray-700 rounded-full animate-spin" /></div>
           : stats.recentUsers?.length === 0 ? <p className="text-sm text-gray-400 text-center py-8">No users yet</p>
@@ -213,7 +213,7 @@ const AdminDashboard = () => {
         </div>
 
         {/* Quick actions */}
-        <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm md:col-span-1">
+        <div className="bg-white border border-gray-100 rounded-xl p-5 shadow-sm md:col-span-1">
           <h2 className="text-sm font-semibold text-gray-900 mb-3">Quick actions</h2>
           <div className="flex flex-col gap-2">
             {actions.map(({ label, icon: Icon, path, primary }) => (

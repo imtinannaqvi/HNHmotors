@@ -50,13 +50,13 @@ const ManageCars = () => {
         </div>
         <button
           onClick={() => navigate('/admin/add-car')}
-          className="flex items-center gap-2 px-4 py-2.5 bg-gray-900 text-white text-sm font-semibold rounded-xl hover:bg-black transition">
+          className="flex items-center gap-2 px-4 py-2.5 bg-gray-900 text-white text-sm font-semibold rounded-md hover:bg-black transition">
           <Plus size={15} /> Add Vehicle
         </button>
       </div>
 
       {/* Table */}
-      <div className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
+      <div className="bg-white border border-gray-100 rounded-md shadow-sm overflow-hidden">
         <table className="w-full text-left">
           <thead>
             <tr className="bg-gray-50 border-b border-gray-100">
@@ -105,7 +105,7 @@ const ManageCars = () => {
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-600 font-medium">{car.brand || '—'}</td>
                 <td className="px-6 py-4">
-                  <span className="text-[10px] font-semibold bg-gray-100 text-gray-600 px-2 py-1 rounded-lg">
+                  <span className="text-[10px] font-semibold bg-gray-100 text-gray-600 px-2 py-1 rounded-md">
                     {car.category || '—'}
                   </span>
                 </td>

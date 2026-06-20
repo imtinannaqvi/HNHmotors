@@ -67,8 +67,9 @@ const CarDetails = () => {
       setSending(false);
     }
   };
-return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
+
+  return (
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
 
       {/* Back */}
       <button onClick={() => navigate(-1)}
@@ -76,11 +77,11 @@ return (
         <ArrowLeft size={16} /> Back to listings
       </button>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-start">
 
         {/* ── LEFT: Gallery + description + similar ── */}
         <div>
-          <div className="relative w-full h-[420px] space-y-4 rounded-2xl overflow-hidden bg-gray-900">
+          <div className="relative w-full h-56 sm:h-80 lg:h-[420px] rounded-2xl overflow-hidden bg-gray-900">
             {images.length > 0 ? (
               <img key={activeImg}
                 src={`${API_BASE}/${images[activeImg]}`}
@@ -102,12 +103,12 @@ return (
             {images.length > 1 && (
               <>
                 <button onClick={prev}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full bg-black/30 hover:bg-orange-500 text-white transition-all duration-300">
-                  <ChevronLeft size={22} />
+                  className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-black/30 hover:bg-orange-500 text-white transition-all duration-300">
+                  <ChevronLeft size={20} />
                 </button>
                 <button onClick={next}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full bg-black/30 hover:bg-orange-500 text-white transition-all duration-300">
-                  <ChevronRight size={22} />
+                  className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-black/30 hover:bg-orange-500 text-white transition-all duration-300">
+                  <ChevronRight size={20} />
                 </button>
                 <span className="absolute bottom-3 right-3 bg-black/70 text-white text-xs font-semibold px-2.5 py-1 rounded">
                   {activeImg + 1}/{images.length}
@@ -117,10 +118,10 @@ return (
           </div>
 
           {images.length > 1 && (
-            <div className="grid grid-cols-5 gap-2 mt-2">
+            <div className="grid grid-cols-5 gap-1.5 sm:gap-2 mt-2">
               {images.slice(0, 10).map((img, i) => (
                 <button key={i} onClick={() => setActiveImg(i)}
-                  className={`h-16 rounded-lg overflow-hidden border-2 transition-all duration-200 ${
+                  className={`h-14 sm:h-16 rounded-lg overflow-hidden border-2 transition-all duration-200 ${
                     i === activeImg ? 'border-orange-500' : 'border-transparent opacity-70 hover:opacity-100'
                   }`}>
                   <img src={`${API_BASE}/${img}`} alt="" className="w-full h-full object-cover" />
@@ -130,23 +131,23 @@ return (
           )}
 
           {description && (
-            <div className="bg-white border border-gray-200 rounded-2xl p-5 mt-4">
+            <div className="bg-white border border-gray-200 rounded-2xl p-4 sm:p-5 mt-4">
               <h2 className="text-sm font-bold text-gray-900 mb-2 uppercase tracking-wide">Description</h2>
               <div className="w-8 h-0.5 bg-orange-500 mb-3" />
               <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-line">{description}</p>
             </div>
           )}
 
-          {/* ── Similar vehicles (under description) ── */}
+          {/* ── Similar vehicles ── */}
           {related.length > 0 && (
             <div className="mt-6">
-              <h2 className="text-md font-black text-gray-900 mb-1  tracking-wide">Similar Vehicles</h2>
+              <h2 className="text-md font-black text-gray-900 mb-1 tracking-wide">Similar Vehicles</h2>
               <div className="w-8 h-0.5 bg-orange-500 mb-4" />
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 gap-3 sm:gap-4">
                 {related.slice(0, 4).map(c => (
                   <button key={c._id} onClick={() => navigate(`/car/${c._id}`)}
                     className="bg-white border border-gray-200 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-lg hover:border-orange-200 hover:-translate-y-1 text-left group">
-                    <div className="h-32 bg-gray-100 overflow-hidden">
+                    <div className="h-28 sm:h-32 bg-gray-100 overflow-hidden">
                       {c.thumbnail ? (
                         <img src={`${API_BASE}/${c.thumbnail}`} alt={c.title}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
@@ -169,34 +170,34 @@ return (
 
         {/* ── RIGHT: Details ── */}
         <div>
-          <h1 className="text-2xl font-black text-gray-900 uppercase tracking-tight mb-3">{car.title}</h1>
+          <h1 className="text-xl sm:text-2xl font-black text-gray-900 uppercase tracking-tight mb-3">{car.title}</h1>
 
           {/* Price row */}
-          <div className="flex items-center gap-3 border-b border-gray-200 pb-3 mb-0">
+          <div className="flex items-center flex-wrap gap-2 sm:gap-3 border-b border-gray-200 pb-3 mb-0">
             <span className="text-sm font-bold text-orange-500 uppercase tracking-wide">
               Price <span className="text-gray-400 font-medium normal-case">— (£)</span>
             </span>
             {car.isSpecialOffer && car.discountedPrice ? (
-              <span className="text-xl font-black text-gray-900">
+              <span className="text-lg sm:text-xl font-black text-gray-900">
                 £{car.discountedPrice?.toLocaleString()}
                 <span className="text-sm text-gray-400 line-through ml-2 font-medium">£{car.price?.toLocaleString()}</span>
               </span>
             ) : (
-              <span className="text-xl font-black text-gray-900">£{car.price?.toLocaleString() || '0'}</span>
+              <span className="text-lg sm:text-xl font-black text-gray-900">£{car.price?.toLocaleString() || '0'}</span>
             )}
           </div>
 
-          {/* Details table */}
-          <div className="border border-gray-200 border-t-0">
-            <table className="w-full text-sm">
+          {/* Details table — scrolls horizontally if cramped on tiny screens */}
+          <div className="border border-gray-200 border-t-0 overflow-x-auto">
+            <table className="w-full text-xs sm:text-sm min-w-[320px]">
               <tbody>
                 <tr className="border-b border-gray-200">
-                  <td className="px-4 py-2.5 text-gray-500 bg-gray-50 w-[22%]">Stock Id</td>
-                  <td className="px-4 py-2.5 text-gray-900 font-semibold w-[28%]">{stockId}</td>
+                  <td className="px-3 sm:px-4 py-2.5 text-gray-500 bg-gray-50 w-[22%]">Stock Id</td>
+                  <td className="px-3 sm:px-4 py-2.5 text-gray-900 font-semibold w-[28%]">{stockId}</td>
                   {tableEntries[0] ? (
                     <>
-                      <td className="px-4 py-2.5 text-gray-500 bg-gray-50 w-[22%] capitalize">{tableEntries[0][0]}</td>
-                      <td className="px-4 py-2.5 text-gray-900 font-semibold w-[28%]">{String(tableEntries[0][1])}</td>
+                      <td className="px-3 sm:px-4 py-2.5 text-gray-500 bg-gray-50 w-[22%] capitalize">{tableEntries[0][0]}</td>
+                      <td className="px-3 sm:px-4 py-2.5 text-gray-900 font-semibold w-[28%]">{String(tableEntries[0][1])}</td>
                     </>
                   ) : <><td className="bg-gray-50" /><td /></>}
                 </tr>
@@ -208,14 +209,14 @@ return (
                     <tr key={rowIdx} className="border-b border-gray-200">
                       {left ? (
                         <>
-                          <td className="px-4 py-2.5 text-gray-500 bg-gray-50 capitalize">{left[0]}</td>
-                          <td className="px-4 py-2.5 text-gray-900 font-semibold">{String(left[1])}</td>
+                          <td className="px-3 sm:px-4 py-2.5 text-gray-500 bg-gray-50 capitalize">{left[0]}</td>
+                          <td className="px-3 sm:px-4 py-2.5 text-gray-900 font-semibold">{String(left[1])}</td>
                         </>
                       ) : <><td className="bg-gray-50" /><td /></>}
                       {right ? (
                         <>
-                          <td className="px-4 py-2.5 text-gray-500 bg-gray-50 capitalize">{right[0]}</td>
-                          <td className="px-4 py-2.5 text-gray-900 font-semibold">{String(right[1])}</td>
+                          <td className="px-3 sm:px-4 py-2.5 text-gray-500 bg-gray-50 capitalize">{right[0]}</td>
+                          <td className="px-3 sm:px-4 py-2.5 text-gray-900 font-semibold">{String(right[1])}</td>
                         </>
                       ) : <><td className="bg-gray-50" /><td /></>}
                     </tr>
@@ -228,17 +229,17 @@ return (
           {/* Features */}
           {car.features?.length > 0 && (
             <div className="mt-5">
-              <h2 className="text-center text-base font-bold text-gray-900 uppercase tracking-wide bg-gray-50 border border-gray-200 py-2.5">
+              <h2 className="text-center text-sm sm:text-base font-bold text-gray-900 uppercase tracking-wide bg-gray-50 border border-gray-200 py-2.5">
                 Features
               </h2>
               <div className="border border-gray-200 border-t-0">
-                <table className="w-full text-sm">
+                <table className="w-full text-xs sm:text-sm">
                   <tbody>
-                    {Array.from({ length: Math.ceil(car.features.length / 3) }).map((_, rowIdx) => (
+                    {Array.from({ length: Math.ceil(car.features.length / 2) }).map((_, rowIdx) => (
                       <tr key={rowIdx} className="border-b border-gray-200 last:border-b-0">
-                        {[0, 1, 2].map(col => {
-                          const f = car.features[rowIdx * 3 + col];
-                          return <td key={col} className="px-4 py-2.5 text-gray-700 w-1/3">{f || ''}</td>;
+                        {[0, 1].map(col => {
+                          const f = car.features[rowIdx * 2 + col];
+                          return <td key={col} className="px-3 sm:px-4 py-2.5 text-gray-700 w-1/2">{f || ''}</td>;
                         })}
                       </tr>
                     ))}
@@ -280,14 +281,16 @@ return (
               </div>
             ) : (
               <form onSubmit={submitQuery} className="space-y-3">
-                <input name="name" value={query.name} onChange={handleQueryChange} required placeholder="Your name"
-                  className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100 transition" />
-                <input name="phone" value={query.phone} onChange={handleQueryChange} required placeholder="Your phone"
-                  className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100 transition" />
-                <input name="location" value={query.location} onChange={handleQueryChange} placeholder="Your location"
-                  className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100 transition" />
-                <input name="email" type="email" value={query.email} onChange={handleQueryChange} required placeholder="Your email"
-                  className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100 transition" />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <input name="name" value={query.name} onChange={handleQueryChange} required placeholder="Your name"
+                    className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100 transition" />
+                  <input name="phone" value={query.phone} onChange={handleQueryChange} required placeholder="Your phone"
+                    className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100 transition" />
+                  <input name="location" value={query.location} onChange={handleQueryChange} placeholder="Your location"
+                    className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100 transition" />
+                  <input name="email" type="email" value={query.email} onChange={handleQueryChange} required placeholder="Your email"
+                    className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100 transition" />
+                </div>
                 <textarea name="message" value={query.message} onChange={handleQueryChange} rows={3}
                   placeholder={`I'm interested in the ${car.title}...`}
                   className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100 transition resize-none" />
@@ -307,7 +310,7 @@ return (
           </div>
 
           {/* Contact info */}
-          <div className="flex justify-center gap-5 mt-6">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-5 mt-6">
             <a href="tel:+447000000000" className="flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-orange-500 transition-colors duration-200">
               <Phone size={13} /> +44 7000 000000
             </a>
@@ -325,7 +328,6 @@ return (
           style={{ animation: 'fadeIn 0.25s ease' }}
           onClick={() => setLightbox(false)}>
 
-          {/* Close — top left */}
           <button
             onClick={() => setLightbox(false)}
             className="absolute top-4 left-4 w-11 h-11 flex items-center justify-center rounded-full bg-white/10 hover:bg-orange-500 text-white transition-all duration-300 z-10"
@@ -333,14 +335,12 @@ return (
             <X size={22} />
           </button>
 
-          {/* Counter — top right */}
           {images.length > 1 && (
             <span className="absolute top-5 right-5 text-white/80 text-sm font-semibold">
               {activeImg + 1} / {images.length}
             </span>
           )}
 
-          {/* Image (clicking it doesn't close) */}
           <img
             src={`${API_BASE}/${images[activeImg]}`}
             alt={car.title}
@@ -348,18 +348,17 @@ return (
             className="max-w-[92vw] max-h-[88vh] object-contain select-none"
           />
 
-          {/* Prev / Next inside lightbox */}
           {images.length > 1 && (
             <>
               <button
                 onClick={(e) => { e.stopPropagation(); prev(); }}
-                className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center rounded-full bg-white/10 hover:bg-orange-500 text-white transition-all duration-300">
-                <ChevronLeft size={26} />
+                className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center rounded-full bg-white/10 hover:bg-orange-500 text-white transition-all duration-300">
+                <ChevronLeft size={24} />
               </button>
               <button
                 onClick={(e) => { e.stopPropagation(); next(); }}
-                className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center rounded-full bg-white/10 hover:bg-orange-500 text-white transition-all duration-300">
-                <ChevronRight size={26} />
+                className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center rounded-full bg-white/10 hover:bg-orange-500 text-white transition-all duration-300">
+                <ChevronRight size={24} />
               </button>
             </>
           )}

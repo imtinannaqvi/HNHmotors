@@ -6,23 +6,22 @@ const settingsSchema = new mongoose.Schema({
         logo: String,
         location: String,
         phoneNumber: String,
-        navLinks: [{ title: String }] // List of navigation names
+        navLinks: [{ title: String }]
     },
 
     // Footer Section
     footer: {
+        logo: String,              // ✅ ADDED — this was missing
         description: String,
         email: String,
         whatsappNumber: String,
         quickLinks: [{ title: String }],
-        
-        // Import Links by Body Type
-        bodyTypeLinks: [{ 
-            title: String, 
-            options: [{ label: String }] 
+
+        bodyTypeLinks: [{
+            title: String,
+            options: [{ label: String }]
         }],
-        
-        // Important Links
+
         importantLinks: [{
             title: String,
             options: [{ label: String }]

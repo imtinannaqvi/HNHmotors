@@ -52,20 +52,18 @@ const Navbar = () => {
   const isActive = (to) => to === '/' ? pathname === '/' : pathname.startsWith(to);
 
   return (
-    <header className="w-full  z-50">
+    <header className="w-full z-50">
 
       {/* ── TOP BAR ── */}
-      <div className="bg-white border-b border-gray-100 px-6 py-4 shadow-sm">
-        <div className="max-w-5xl mx-auto flex items-center justify-between gap-6">
+      <div className="bg-white border-b border-gray-100 px-4 sm:px-6 py-4 shadow-sm">
+        <div className="max-w-5xl mx-auto flex items-center justify-between gap-4 sm:gap-6">
 
           {/* Logo */}
-         <Link to="/" className="flex-shrink-0 transition-transform duration-300 hover:scale-[1.04]">
-  {logo ? (
-    <div className="w-16 h-16 rounded-full border-2 border-orange-500 p-1 bg-white overflow-hidden flex items-center justify-center shadow-sm">
-      <img src={`/${logo}`} alt="Logo"
-        className="w-full h-full object-contain rounded-full" />
-    </div>
-  ) : (
+          <Link to="/" className="flex-shrink-0 transition-transform duration-300 hover:scale-[1.04]">
+            {logo ? (
+              <img src={`/${logo}`} alt="Logo"
+                className="h-16 sm:h-20 w-auto object-contain" />
+            ) : (
               <div className="flex items-center gap-1">
                 <span style={{ fontStyle: 'italic', fontWeight: 900, fontSize: '28px', color: '#111', letterSpacing: '-1px', fontFamily: 'Georgia, serif' }}>
                   <span style={{ color: '#e85d04' }}>H</span>NH

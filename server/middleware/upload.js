@@ -33,7 +33,8 @@ const carStorage = multer.diskStorage({
 const logoStorage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, logoDir),
   filename:    (req, file, cb) => {
-    cb(null, `logo${path.extname(file.originalname)}`);
+    const unique = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
+    cb(null, `logo-${unique}${path.extname(file.originalname)}`);
   },
 });
 

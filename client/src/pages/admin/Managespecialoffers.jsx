@@ -55,7 +55,7 @@ const ManageSpecialOffers = () => {
       {specialCars.length > 0 && (
         <div className="mb-6">
           <h2 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3">Active offers</h2>
-          <div className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
+          <div className="bg-white border border-gray-100 rounded-md shadow-sm overflow-hidden">
             {specialCars.map((car, i) => (
               <div key={car._id} className={`flex items-center gap-4 px-5 py-4 ${i !== 0 ? 'border-t border-gray-50' : ''}`}>
                 <div className="w-12 h-12 bg-gray-100 rounded-xl overflow-hidden flex-shrink-0">
@@ -99,7 +99,7 @@ const ManageSpecialOffers = () => {
       {/* Regular cars — add as offer */}
       <div>
         <h2 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3">Add to special offers</h2>
-        <div className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
+        <div className="bg-white border border-gray-100 rounded-md shadow-sm overflow-hidden">
           {regularCars.length === 0 ? (
             <p className="text-center text-sm text-gray-400 py-10">All cars are already on special offer</p>
           ) : regularCars.map((car, i) => (
