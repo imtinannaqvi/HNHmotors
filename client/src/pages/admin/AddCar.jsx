@@ -371,7 +371,7 @@ const AddCar = () => {
                       value={seoTitle}
                       onChange={e => setSeoTitle(e.target.value)}
                       maxLength={70}
-                      placeholder="e.g. 2022 BMW X5 xDrive40i for Sale | HNH Motors"
+                      placeholder="Add Title"
                       className={inputCls}
                     />
                     <p className="text-xs text-slate-400 mt-1.5">Shown as the clickable headline in search results. Aim for under 60 characters.</p>
@@ -389,7 +389,7 @@ const AddCar = () => {
                       onChange={e => setSeoDescription(e.target.value)}
                       maxLength={200}
                       rows={3}
-                      placeholder="e.g. Buy this 2022 BMW X5 at HNH Motors. Full service history, low mileage, finance available. View photos and book a test drive."
+                      placeholder="Add Description"
                       className={`${inputCls} resize-none`}
                     />
                     <p className="text-xs text-slate-400 mt-1.5">The summary under the title in search results. Aim for under 160 characters.</p>
