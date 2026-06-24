@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import api from "../../api/axios.js";
-import { Upload, CheckCircle, Plus, X, Tag, ImageIcon, ListPlus, Sparkles } from 'lucide-react';
+import { Upload, CheckCircle, Plus, X, Tag, ImageIcon, ListPlus, Sparkles, Search } from 'lucide-react';
 
 const inputCls = 'w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-sm text-slate-700 outline-none focus:border-slate-400 focus:ring-2 focus:ring-slate-100 transition font-medium bg-white';
 const labelCls = 'block text-[11px] font-medium uppercase tracking-wider text-slate-400 mb-2';
@@ -42,6 +42,10 @@ const AddCar = () => {
   const [isSpecialOffer,  setIsSpecialOffer]  = useState(false);
   const [discountedPrice, setDiscountedPrice] = useState('');
   const [offerLabel,      setOfferLabel]      = useState('');
+
+  // SEO
+  const [seoTitle,       setSeoTitle]       = useState('');
+  const [seoDescription, setSeoDescription] = useState('');
 
   // Does the details list contain a Brand row?
   const brandDetail = details.find(d => d.label.toLowerCase() === 'brand');
@@ -118,6 +122,10 @@ const AddCar = () => {
     if (isSpecialOffer && discountedPrice) data.append('discountedPrice', discountedPrice);
     if (isSpecialOffer && offerLabel)      data.append('offerLabel',      offerLabel);
 
+    // SEO — always sent (controller auto-generates a fallback if left blank)
+    data.append('seoTitle',       seoTitle);
+    data.append('seoDescription', seoDescription);
+
     try {
       await api.post('/cars', data, { headers: { 'Content-Type': 'multipart/form-data' } });
       setSuccess(true);
@@ -128,6 +136,7 @@ const AddCar = () => {
       setFeatures([]); setFeatureInput('');
       setBrandLogo(null); setBrandLogoPreview('');
       setIsSpecialOffer(false); setDiscountedPrice(''); setOfferLabel('');
+      setSeoTitle(''); setSeoDescription('');
     } catch (err) {
       alert('Error: ' + (err.response?.data?.message || err.message));
     } finally {
@@ -346,6 +355,46 @@ const AddCar = () => {
                     </div>
                   </div>
                 )}
+              </Section>
+
+              {/* SEO */}
+              <Section icon={Search} title="SEO" hint="Optional — leave blank to auto-generate from the title">
+                <div className="space-y-4">
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <label className={`${labelCls} mb-0`}>Meta Title</label>
+                      <span className={`text-[11px] font-medium ${seoTitle.length > 60 ? 'text-amber-500' : 'text-slate-300'}`}>
+                        {seoTitle.length}/60
+                      </span>
+                    </div>
+                    <input
+                      value={seoTitle}
+                      onChange={e => setSeoTitle(e.target.value)}
+                      maxLength={70}
+                      placeholder="e.g. 2022 BMW X5 xDrive40i for Sale | HNH Motors"
+                      className={inputCls}
+                    />
+                    <p className="text-xs text-slate-400 mt-1.5">Shown as the clickable headline in search results. Aim for under 60 characters.</p>
+                  </div>
+
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <label className={`${labelCls} mb-0`}>Meta Description</label>
+                      <span className={`text-[11px] font-medium ${seoDescription.length > 160 ? 'text-amber-500' : 'text-slate-300'}`}>
+                        {seoDescription.length}/160
+                      </span>
+                    </div>
+                    <textarea
+                      value={seoDescription}
+                      onChange={e => setSeoDescription(e.target.value)}
+                      maxLength={200}
+                      rows={3}
+                      placeholder="e.g. Buy this 2022 BMW X5 at HNH Motors. Full service history, low mileage, finance available. View photos and book a test drive."
+                      className={`${inputCls} resize-none`}
+                    />
+                    <p className="text-xs text-slate-400 mt-1.5">The summary under the title in search results. Aim for under 160 characters.</p>
+                  </div>
+                </div>
               </Section>
 
               {/* Submit */}

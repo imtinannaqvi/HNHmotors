@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import axios from '../api/axios.js';
 import { ArrowLeft, Car, ChevronLeft, ChevronRight, Phone, Mail, CheckCircle, X } from 'lucide-react';
 const API_BASE = '';
@@ -48,6 +49,16 @@ const CarDetails = () => {
   const description = car.details?.Description || car.details?.description || car.description || '';
   const tableEntries = detailEntries.filter(([label]) => label.toLowerCase() !== 'description');
 
+  // ── SEO values: use saved fields, fall back to sensible defaults ──
+  const metaTitle = car.seoTitle?.trim()
+    || `${car.title} for Sale | HNH Motors`;
+  const metaDescription = car.seoDescription?.trim()
+    || (description
+        ? description.slice(0, 160)
+        : `View the ${car.title} at HNH Motors${car.price ? ` — £${car.price.toLocaleString()}` : ''}. Specs, photos and enquiries.`);
+  const metaImage = images[0] ? `${API_BASE}/${images[0]}` : '';
+  const pageUrl = typeof window !== 'undefined' ? window.location.href : '';
+
   const prev = () => setActiveImg(i => (i - 1 + images.length) % images.length);
   const next = () => setActiveImg(i => (i + 1) % images.length);
 
@@ -70,6 +81,26 @@ const CarDetails = () => {
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+
+      {/* ── SEO meta tags (invisible to visitors) ── */}
+      <Helmet>
+        <title>{metaTitle}</title>
+        <meta name="description" content={metaDescription} />
+        {pageUrl && <link rel="canonical" href={pageUrl} />}
+
+        {/* Open Graph (Facebook, WhatsApp, LinkedIn link previews) */}
+        <meta property="og:type" content="product" />
+        <meta property="og:title" content={metaTitle} />
+        <meta property="og:description" content={metaDescription} />
+        {metaImage && <meta property="og:image" content={metaImage} />}
+        {pageUrl && <meta property="og:url" content={pageUrl} />}
+
+        {/* Twitter card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={metaTitle} />
+        <meta name="twitter:description" content={metaDescription} />
+        {metaImage && <meta name="twitter:image" content={metaImage} />}
+      </Helmet>
 
       {/* Back */}
       <button onClick={() => navigate(-1)}

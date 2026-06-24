@@ -23,7 +23,13 @@ const carSchema = new mongoose.Schema({
 
   // ── Flags ─────────────────────────────────────────────────
   isFeatured: { type: Boolean, default: false },
-  brandLogo: { type: String, default: '' },
+  brandLogo:  { type: String, default: '' },
+
+  // ── SEO ───────────────────────────────────────────────────
+  // Not required: keeps old cars valid and lets quick adds work.
+  // The controller fills sensible defaults when these are blank.
+  seoTitle:       { type: String, trim: true, default: '' },
+  seoDescription: { type: String, trim: true, default: '' },
 
 }, { timestamps: true });
 

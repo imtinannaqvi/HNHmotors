@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from "../../api/axios.js";
-import { Pencil, Trash2, Car, Plus } from 'lucide-react';
+import { Pencil, Trash2, Car, Plus, Search } from 'lucide-react';
 
 const ManageCars = () => {
   const [cars,    setCars]    = useState([]);
@@ -61,8 +61,8 @@ const ManageCars = () => {
           <thead>
             <tr className="bg-gray-50 border-b border-gray-100">
               <th className="px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-gray-400">Vehicle</th>
+              <th className="px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-gray-400">SEO</th>
               <th className="px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-gray-400">Brand</th>
-              <th className="px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-gray-400">Category</th>
               <th className="px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-gray-400">Price</th>
               <th className="px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-gray-400">Status</th>
               <th className="px-6 py-3 text-right text-[10px] font-bold uppercase tracking-widest text-gray-400">Actions</th>
@@ -82,7 +82,7 @@ const ManageCars = () => {
                 </td>
               </tr>
             ) : cars.map(car => (
-              <tr key={car._id} className="hover:bg-gray-50/60 transition-colors">
+              <tr key={car._id} className="hover:bg-gray-50/60 transition-colors align-top">
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
                     {/* Image or placeholder */}
@@ -103,12 +103,33 @@ const ManageCars = () => {
                     </div>
                   </div>
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-600 font-medium">{car.brand || '—'}</td>
-                <td className="px-6 py-4">
-                  <span className="text-[10px] font-semibold bg-gray-100 text-gray-600 px-2 py-1 rounded-md">
-                    {car.category || '—'}
-                  </span>
+
+                {/* ── SEO column ── */}
+                <td className="px-6 py-4 max-w-[260px]">
+                  {car.seoTitle || car.seoDescription ? (
+                    <div className="space-y-1">
+                      {car.seoTitle && (
+                        <p
+                          title={car.seoTitle}
+                          className="text-xs font-semibold text-gray-700 truncate flex items-center gap-1">
+                          <Search size={11} className="text-gray-300 shrink-0" />
+                          {car.seoTitle}
+                        </p>
+                      )}
+                      {car.seoDescription && (
+                        <p
+                          title={car.seoDescription}
+                          className="text-[11px] text-gray-400 line-clamp-2 leading-snug">
+                          {car.seoDescription}
+                        </p>
+                      )}
+                    </div>
+                  ) : (
+                    <span className="text-[11px] text-gray-300 italic">No SEO set</span>
+                  )}
                 </td>
+
+                <td className="px-6 py-4 text-sm text-gray-600 font-medium">{car.brand || '—'}</td>
                 <td className="px-6 py-4 text-sm font-bold text-gray-900">
                   £{car.price?.toLocaleString() || '0'}
                 </td>

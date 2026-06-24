@@ -1,6 +1,14 @@
 import Car from '../models/Car.js';
 import mongoose from 'mongoose';
 
+// ── Helpers: build sensible SEO defaults when not provided ──
+const buildSeoTitle = (title) =>
+  `${title} for Sale | HNH Motors`;
+
+const buildSeoDescription = (title, price) =>
+  `Buy the ${title} at HNH Motors${price ? ` for £${Number(price).toLocaleString()}` : ''}. ` +
+  `View specs, features and photos. Quality used and new cars.`;
+
 // ── GET all cars with filters + pagination ────────────────
 export const getCars = async (req, res) => {
   try {
@@ -83,16 +91,16 @@ export const getCarById = async (req, res) => {
 };
 
 // ── POST create car ───────────────────────────────────────
-// ── POST create car ───────────────────────────────────────
 export const createCar = async (req, res) => {
   try {
     const {
       title, price,
       details, features,
       isFeatured, isSpecialOffer, discountedPrice, offerLabel,
+      seoTitle, seoDescription,
     } = req.body;
 
-    // req.files is now an OBJECT: { images: [...], brandLogo: [...] }
+    // req.files is an OBJECT: { images: [...], brandLogo: [...] }
     const imageFiles = req.files?.images || [];
     const images = imageFiles.map(f => `uploads/cars/${f.filename}`);
     const thumbnail = images[0] || '';
@@ -112,6 +120,9 @@ export const createCar = async (req, res) => {
       isSpecialOffer:  isSpecialOffer === 'true',
       discountedPrice: discountedPrice ? Number(discountedPrice) : null,
       offerLabel:      offerLabel || '',
+      // Use provided SEO, otherwise auto-generate from title/price
+      seoTitle:        seoTitle?.trim()       || buildSeoTitle(title),
+      seoDescription:  seoDescription?.trim() || buildSeoDescription(title, price),
     });
 
     res.status(201).json({ message: 'Car added successfully', car });
@@ -136,7 +147,17 @@ export const updateCar = async (req, res) => {
     updatedData.isSpecialOffer  = req.body.isSpecialOffer === 'true';
     updatedData.discountedPrice = req.body.discountedPrice ? Number(req.body.discountedPrice) : null;
 
-    // req.files is now an OBJECT: { images: [...], brandLogo: [...] }
+    // ── SEO: only overwrite if a value was sent ──
+    if (req.body.seoTitle !== undefined) {
+      updatedData.seoTitle = req.body.seoTitle.trim() || buildSeoTitle(req.body.title || car.title);
+    }
+    if (req.body.seoDescription !== undefined) {
+      updatedData.seoDescription =
+        req.body.seoDescription.trim() ||
+        buildSeoDescription(req.body.title || car.title, req.body.price || car.price);
+    }
+
+    // req.files is an OBJECT: { images: [...], brandLogo: [...] }
     const imageFiles = req.files?.images || [];
 
     // ── Brand logo: replace only if a new one was uploaded ──
